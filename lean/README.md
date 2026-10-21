@@ -2,8 +2,8 @@
 
 Lean 4 formalization of *Prime extremality for product integrals over primitive
 sets* (`../main.tex`). Lean **v4.35.0**, Mathlib `56a00585`, built against
-[LeanCert](https://github.com/alerad/leancert) (`~/research/leancert`), its q-product
-library [leancert-qproduct](../../../leancert-qproduct) (`QProduct.*`, formerly
+[LeanCert](https://github.com/alerad/leancert), its q-product
+library [leancert-qproduct](https://github.com/alerad/leancert-qproduct) (`QProduct.*`, formerly
 `LeanCert.QProduct.*`) and, for the prime number theorem, PrimeNumberTheoremAnd at
 upstream commit `127b50e5` (unmodified).
 
@@ -14,7 +14,19 @@ upstream commit `127b50e5` (unmodified).
 
 ## Checking
 
-The development is compiled module by module with `lean` (no Lake), reusing the built
+`lakefile.toml` pins every dependency to a public commit, and `lake build` compiles every
+module, the PNT bridges included. CI (`../.github/workflows/lean.yml`) runs this and then
+`scripts/check-axioms.sh`, which fails on any `sorryAx`, on axioms declared by the
+development, or on a paper result (table below) using anything beyond the standard axioms
+(the two `native_decide` computations excepted):
+
+```sh
+lake exe cache get && lake build && ./scripts/check-axioms.sh
+```
+
+### Local scripts (original workflow)
+
+Alternatively, the development is compiled module by module with `lean` (no Lake), reusing the built
 Mathlib of the leancert checkout. `build35.py` resolves imports, compiles in dependency
 order in parallel into `.lake/check35`, and skips up-to-date modules (`FORCE=1` rebuilds,
 `VERBOSE=1` prints Lean's messages, e.g. `#print axioms` output).
@@ -39,7 +51,7 @@ for m in PrimeNumberTheoremAnd.Consequences PrimeNumberTheoremAnd.MediumPNT; do
   python3 leanc.py $PWD/build-upstream-435 $m $PWD/pnt435,$PWD/arch435; done
 ```
 
-`lakefile.toml` records the same dependencies for an ordinary `lake build`.
+These scripts use local checkouts; the pinned `lake build` above needs none.
 
 ## Layout
 
@@ -77,7 +89,8 @@ for m in PrimeNumberTheoremAnd.Consequences PrimeNumberTheoremAnd.MediumPNT; do
 | `TailSecond` | Theorem 5.10 unconditionally (`tail_second_order_pnt`) |
 | `PNT` | Theorem 1.5 and the asymptotic of Proposition 5.9 unconditionally, via PrimeNumberTheoremAnd |
 
-`RntPaper.lean` imports everything that does not need PrimeNumberTheoremAnd.
+`RntPaper.lean` imports everything that does not need PrimeNumberTheoremAnd; `lake build`
+builds all modules regardless.
 
 ## Paper results → Lean declarations
 
