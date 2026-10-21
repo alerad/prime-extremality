@@ -1,0 +1,36 @@
+name = "RntPaper"
+version = "0.1.0"
+defaultTargets = ["RntPaper"]
+
+[leanOptions]
+relaxedAutoImplicit = false
+
+# LeanCert supplies: qProd / F / moment (finite q-products), exact rational
+# integral and moment certificates, the prime limit `primeLambda`, the
+# analytic bridge `primeLambda_eq_integral_tprod`, tail-collapse majorants,
+# and the `leancert` tactic (exact polynomial integrals, interval bounds).
+#
+# Local development uses the sibling checkout so its built Mathlib is reused.
+# For publication replace `path` by a pinned `git`/`rev` pair.
+[[require]]
+name = "leancert"
+path = "../../../../leancert"
+
+# The q-product library (`QProduct.*`, formerly `LeanCert.QProduct.*`), extracted from
+# LeanCert into the sibling `leancert-qproduct` project.
+[[require]]
+name = "QProduct"
+path = "../../../leancert-qproduct"
+
+# PrimeNumberTheoremAnd supplies the prime number theorem: `chebyshev_asymptotic`
+# (θ ~ id, Theorem 1.6) and `MediumPNT` (error term, Theorem 5.10). Only the import
+# closures of `PrimeNumberTheoremAnd.Consequences` and `PrimeNumberTheoremAnd.MediumPNT`
+# are used, unmodified, at upstream commit 127b50e5 (AlexKontorovich/PrimeNumberTheoremAnd,
+# Lean v4.35.0, the same Mathlib commit 56a00585 as LeanCert), checked out as a worktree
+# in `../../.deps/pnt435`.
+[[require]]
+name = "PrimeNumberTheoremAnd"
+path = "../../.deps/pnt435"
+
+[[lean_lib]]
+name = "RntPaper"

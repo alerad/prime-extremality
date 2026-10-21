@@ -1,0 +1,1577 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prm}{\mathcal{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\icv}{\preceq_{\mathrm{icv}}}
+
+\title{Prime extremality for product integrals\\ over primitive sets}
+\author{Alejandro Radisic}
+\date{October 2026}
+
+\emergencystretch=2em
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A set $A$ of integers exceeding $1$ is primitive if no element divides
+another. For $0<c\le1$ let $F_c(A)=\int_0^c\prod_{n\in A}(1-x^n)\,dx$.
+We prove that among primitive subsets of $\{2,\dots,N\}$ the primes up
+to $N$ are, for every $c$, the unique minimizer of $F_c$, and that over
+all primitive sets the infimum is attained only by the set of all
+primes, although the primes do not minimize the integrand pointwise. The
+proof rests on one inequality,
+$\int_0^c\prod_{t\in T}(1-x^t)\,dx>\int_0^c(1-x)\,dx$ for every set
+$T\subseteq\{2,3,\dots\}$, which gives a strict compression replacing
+the multiples of an integer $d$ by $d$. Consequently the
+divisibility-minimal elements of any set $U$ uniquely minimize $F_c$
+among primitive subsets of $U$. The minimum at $c=1$ is
+$\Lambda=0.5506530112\ldots$. The truncation error satisfies
+$-\log(I_N-\Lambda)\sim2\pi\sqrt{N/(3\log N)}$, with two further terms
+from the prime number theorem, and to within $O(\log N)$ it is fixed by
+the least prime exceeding $N$. The main results are formally verified
+in Lean~4.
+\end{abstract}
+
+\noindent\textbf{Keywords.} primitive sets; divisibility antichains;
+prime numbers; prime number theorem; partitions into primes; product
+inequalities; stochastic orders; formal verification.
+
+\section{Introduction}\label{sec:intro}
+
+\subsection{Primitive sets and product integrals}
+A set $A\subseteq\{2,3,\dots\}$ is \emph{primitive} (a divisibility
+antichain) if no element of $A$ divides another. Write
+$\Prm_N=\{p\le N:p\text{ prime}\}$ and $\Prm$ for the set of all
+primes. To a set $A\subseteq\{2,3,\dots\}$, finite or infinite, we
+attach the product
+\[
+  P_A(x)=\prod_{n\in A}(1-x^n)\qquad(0\le x<1),
+\]
+which converges locally uniformly on $[0,1)$ (for infinite $A$ because
+$\sum_{n\in A}x^n<\infty$), and its \emph{initial integrals}
+\[
+  F_c(A)=\int_0^cP_A(x)\,dx,\qquad 0<c\le1 .
+\]
+For $A=\varnothing$ we set $P_\varnothing\equiv1$, so
+$F_c(\varnothing)=c$.
+
+Why this functional? The product $P_A$ is the reciprocal of the
+generating function of partitions with parts in $A$,
+\[
+  \frac1{P_A(x)}=\sum_{n\ge0}p_A(n)\,x^n ,
+\]
+where $p_A(n)$ counts the partitions of $n$ into parts from $A$, and its
+integral generalizes the classical evaluation of
+$\int_0^1\prod_{n\ge1}(1-x^n)\,dx$ through Euler's pentagonal
+theorem~\cite{Sandham1954,Mulcrone1956}. We ask which primitive set of
+parts minimizes it. The answer is governed by a single comparison with
+the one-part product $1-x$ (Theorem~\ref{thm:running} below).
+
+Each $P_A$ is nonincreasing in $x$ and antitone in $A$: enlarging $A$
+lowers $P_A$ pointwise. The extremal
+question is therefore not whether large primitive sets beat small ones
+but which \emph{maximal} antichain the integrals prefer. The answer is
+the primes, uniformly in the truncation level $c$.
+
+\begin{theorem}[Unique finite minimizer]\label{thm:unique}
+Let $N\ge2$ and let $A\subseteq\{2,\dots,N\}$ be primitive with
+$A\ne\Prm_N$. Then
+\[
+  F_c(\Prm_N)<F_c(A)\qquad\text{for every }c\in(0,1].
+\]
+\end{theorem}
+
+\begin{theorem}[Infimum over all primitive sets; unique attainment]
+\label{thm:profile}
+Let $Q(x)=\prod_p(1-x^p)$. For every $c\in(0,1]$,
+\[
+  \inf_A F_c(A)=\int_0^cQ(x)\,dx=:\mathcal L(c),
+\]
+the infimum over \emph{all} primitive sets $A\subseteq\{2,3,\dots\}$,
+finite or infinite, and it is attained precisely by $A=\Prm$: for every
+primitive $A\ne\Prm$ and every $c\in(0,1]$, $F_c(A)>\mathcal L(c)$. In
+particular no finite primitive set attains it, while the truncations
+$\Prm_N$ form a minimizing sequence. The value at $c=1$ is
+\[
+  \Lambda:=\mathcal L(1)=\lim_{N\to\infty}\int_0^1\prod_{p\le N}(1-x^p)\,dx
+  =0.5506530112728\ldots
+\]
+\end{theorem}
+
+\subsection{Pointwise extremality fails}
+The integrals are the right objects: the primes do \emph{not} minimize
+the product itself. As $x\uparrow1$ one has
+$P_A(x)\sim\bigl(\prod_{a\in A}a\bigr)(1-x)^{|A|}$ for finite $A$, so
+near $1$ the product is governed by the cardinality of $A$, and maximal
+antichains in $\{2,\dots,N\}$ can have about $N/2$ elements, far more
+than $\pi(N)$. A concrete family already shows the failure at $N=9$.
+
+\begin{proposition}[Failure of pointwise extremality]\label{prop:pointwise}
+For $N\ge9$ let $A_N=(\Prm_N\setminus\{2,3\})\cup\{4,6,9\}$. Then $A_N$
+is primitive and
+\[
+  \frac{P_{A_N}(x)}{P_{\Prm_N}(x)}=(1+x^2)(1+x^3)(1-x^9)
+  \;\sim\;36\,(1-x)\longrightarrow0\qquad(x\uparrow1).
+\]
+Hence $P_{A_N}(x)<P_{\Prm_N}(x)$ on a neighbourhood of $1$, while
+$F_c(\Prm_N)<F_c(A_N)$ for every $c\in(0,1]$ by
+Theorem~\ref{thm:unique}.
+\end{proposition}
+
+\begin{proof}
+No prime $\ge5$ divides or is divisible by $4$, $6$ or $9$, and these
+three are pairwise incomparable, so $A_N$ is primitive. The ratio is
+$(1-x^4)(1-x^6)(1-x^9)/\bigl((1-x^2)(1-x^3)\bigr)$.
+\end{proof}
+
+The ratio drops below $1$ at $x\approx0.965$. Thus every initial
+integral prefers the primes although the integrand does not; the
+theorems identify an integrated comparison that survives a genuine
+obstruction to pointwise comparison (in probabilistic terms, the primes
+are extremal in increasing-concave order but not in the usual stochastic
+order; Remark~\ref{rem:icv}).
+
+\subsection{The universal product inequality and prime compression}
+Both theorems are iterations of a single operation. If $p$ is prime
+and the primitive set $A$ contains multiples $pt$, $t\in T$, then
+$p\notin A$, and the \emph{compression}
+\[
+  C_p(A)=\{p\}\cup\{a\in A:p\nmid a\}
+\]
+is again primitive. Writing $B=\{a\in A:p\nmid a\}$, the change in the
+initial integral is
+\begin{equation}\label{eq:exchange}
+  F_c(A)-F_c(C_p(A))=\int_0^cP_B(u)\,E_T(u^p)\,du,
+  \qquad
+  E_T(v)=\prod_{t\in T}(1-v^t)-(1-v).
+\end{equation}
+For $|T|\ge2$ the factor $E_T$ changes sign on $[0,1]$ (already
+$E_{\{2,3\}}(v)=v-v^2-v^3+v^5$), so the comparison cannot be pointwise. What is true is that its running
+integral is positive, uniformly over all sets of exponents.
+
+\begin{theorem}[Universal product inequality]\label{thm:running}
+For every nonempty set $T\subseteq\{2,3,\dots\}$, finite or infinite,
+and every $c\in(0,1]$,
+\[
+  \int_0^c\prod_{t\in T}(1-v^t)\,dv\;>\;\int_0^c(1-v)\,dv=c-\frac{c^2}{2}.
+\]
+\end{theorem}
+
+Antitonicity reduces the theorem to $T=\{2,3,\dots\}$, where
+$\prod_{n\ge2}(1-x^n)-(1-x)$ changes sign exactly once, so only the
+endpoint $c=1$ must be checked (Section~\ref{sec:running}). The set
+hypothesis is essential (Remark~\ref{rem:multiset}).
+Section~\ref{sec:transport} transports the inequality through the
+substitution $v=u^p$ and the weight $P_B$ in \eqref{eq:exchange},
+giving the strict compression $F_c(C_p(A))<F_c(A)$, and
+Section~\ref{sec:proofs} iterates it.
+
+\subsection{Extremality relative to an ambient set}
+Primality of $p$ plays no role in the compression inequality: the
+substitution $v=u^d$ works for every integer $d\ge1$. What primality
+secures is that $C_p(A)$ is again primitive. Replacing the primes by
+arbitrary divisors gives a relative theorem. For
+$U\subseteq\{2,3,\dots\}$ let
+\[
+  \operatorname{Min}(U)=\{u\in U:\ \text{no proper divisor of $u$ lies in $U$}\}
+\]
+be the set of divisibility-minimal elements of $U$. It is primitive, and
+Theorem~\ref{thm:ambient} states that among primitive subsets of $U$ it is,
+for every $c\in(0,1]$, the unique minimizer of $F_c$, for finite and
+infinite sets alike. The case $U=\{2,3,\dots\}$ recovers
+Theorem~\ref{thm:profile}. Two other cases correspond to recent work on
+the additive weight $f(A)=\sum_{a\in A}1/(a\log a)$
+(Corollary~\ref{cor:ambient}). For primitive sets contained in
+$[x,\infty)$, the problem of Erd\H{o}s, S\'ark\"ozy and Szemer\'edi that
+Alexeev et al.~\cite{Alexeev2026} settle asymptotically,
+$f(A)\le1+O(1/\log x)$, has for $F_c$ an exact unique extremal set, the
+integers $n\ge x$ whose largest proper divisor is less than $x$. For
+primitive sets of integers with at least $k$ prime factors, all taken
+from a set of primes $\mathcal Q$, the minimizer is the set of integers
+with exactly $k$ such factors. This is the analogue of a conjecture of
+Banks and Martin~\cite{BanksMartin2013}, and it holds for every
+$\mathcal Q$, whereas the additive statement fails when
+$2\in\mathcal Q$~\cite{Alexeev2026}.
+
+\subsection{The truncations and the prime number theorem}
+The minimizing sequence of Theorem~\ref{thm:profile} is
+$I_N=F_1(\Prm_N)\downarrow\Lambda$. How fast it converges is a question
+about the primes beyond $N$, and the answer is governed by their
+distribution.
+
+\begin{theorem}[Tail asymptotics]\label{thm:tail}
+As $N\to\infty$,
+\[
+  -\log\bigl(I_N-\Lambda\bigr)\sim2\pi\sqrt{\frac{N}{3\log N}} .
+\]
+Consequently, if $p_n$ is the $n$th prime and $J_n=I_{p_n}$, then
+$-\log(J_n-\Lambda)\sim(2\pi/\sqrt3)\sqrt n$.
+\end{theorem}
+
+With $\Phi(t)=-\log\prod_p(1-e^{-pt})$ and
+$M_N=\inf_{t>0}(Nt+\Phi(t))$, the bound $I_N-\Lambda\le eN^2e^{-M_N}$ is
+elementary and holds for every $N\ge3$. The prime number theorem is
+needed exactly to evaluate $M_N$ and to place a prime in
+$(N,(1+\varepsilon)N]$ (Section~\ref{sec:tailasymp}); Chebyshev's bounds give only the order of
+magnitude (Remark~\ref{rem:chebyshev}). The leading term is also the
+logarithmic growth rate of the number of partitions of $N$ into primes,
+because both come from the same saddle point
+(Remark~\ref{rem:partitions}).
+
+Since $I_N$ changes only when $N$ passes a prime, the natural
+variable is the least prime $q_N>N$. Elementary estimates show
+$\bigl|{-\log(I_N-\Lambda)}-M_{q_N}\bigr|\le2\log q_N+4$
+(Proposition~\ref{prop:nextprime}). Consequently, the bound
+$-\log(I_N-\Lambda)\le M_N+O(\log N)$ is equivalent to the prime-gap
+estimate $p_{n+1}-p_n\ll\sqrt{p_n}(\log p_n)^{3/2}$
+(Corollary~\ref{cor:gaps}). That estimate follows from the Riemann
+hypothesis but is not known unconditionally.
+
+Relative lower-order terms, by contrast, are available unconditionally.
+The prime number theorem with a classical error term gives
+\[
+  -\log(I_N-\Lambda)=2\pi\sqrt{\frac{N}{3\ell}}
+  \Bigl(1-\frac{\log\ell}{2\ell}+\frac{C}{\ell}
+  +O\Bigl(\frac{(\log\ell)^2}{\ell^2}\Bigr)\Bigr),\qquad \ell=\log N,
+\]
+with $C=\gamma-\zeta'(2)/\zeta(2)+\tfrac12\log(2\zeta(2))=1.7426\ldots$
+(Theorem~\ref{thm:second}). Its remainder is much larger than $\log N$,
+so this is consistent with Corollary~\ref{cor:gaps}.
+
+\subsection{Context}
+For the additive weight $\sum_{a\in A}1/(a\log a)$, extremality of the
+primes over primitive sets is the Erd\H{o}s conjecture, proved by
+Lichtman~\cite{Lichtman2023}; see Lichtman--Pomerance
+\cite{LichtmanPomerance2019} for the history and \cite{Alexeev2026} for
+recent developments. The present paper concerns a different, multiplicative
+functional on the same class of sets, with an elementary proof; it is
+not a new route to the additive problem. The comparison is
+nonetheless instructive: for linear weights $\sum_{a\in A}w(a)$ the
+primes win only with sufficient damping (for $w(a)=1/a$ they lose: the
+integers in $[2,N]$ with exactly $k$ prime factors, $k\approx\log\log N$,
+form a primitive set whose reciprocal sum is of order
+$\log N/\sqrt{\log\log N}$; see \cite{LichtmanPomerance2019} and the
+references there), whereas the product integrals prefer the
+primes for every truncation level, with strict uniqueness and no
+dependence on $N$, by a mechanism that is a single elementary
+inequality.
+
+Integrals of this shape have precedents. The all-exponent member
+$\int_0^1\prod_{n\ge1}(1-x^n)\,dx$ is Sandham's Monthly Problem
+4614~\cite{Sandham1954}, evaluated in closed form by
+Mulcrone~\cite{Mulcrone1956} through Euler's pentagonal theorem
+(\href{https://oeis.org/A258232}{OEIS A258232}); the even member is
+\href{https://oeis.org/A258408}{OEIS A258408}. For the prime member no
+closed form appears to be recorded. Its decimal expansion is
+\href{https://oeis.org/A395518}{OEIS A395518}, contributed by the author, whose entry states the
+finite-antichain infimum at $c=1$; the present paper supplies the
+proofs, the uniformity in $c$, the strict uniqueness, and the infinite
+case.
+
+\section{The universal product inequality}\label{sec:running}
+
+Throughout, $H(x)=\prod_{n\ge2}(1-x^n)$ for $0\le x<1$, and $H(1)=0$.
+The product converges locally uniformly on $[0,1)$, and
+$0\le H(x)\le1-x^2\to0$ as $x\uparrow1$, so $H$ is continuous on
+$[0,1]$. For every set $T\subseteq\{2,3,\dots\}$ and $x\in[0,1]$,
+\begin{equation}\label{eq:antitone}
+  P_T(x)\ \ge\ H(x),
+\end{equation}
+since every factor omitted from $P_T$ lies in $[0,1]$. Two lemmas
+control the function $H(x)-(1-x)$.
+
+\begin{lemma}[Single crossing]\label{lem:crossing}
+There is exactly one $x^*\in(0,1)$ with $H(x^*)=1-x^*$, and
+$H(x)-(1-x)$ is strictly positive on $(0,x^*)$ and strictly negative on
+$(x^*,1)$.
+\end{lemma}
+
+\begin{proof}
+On $[0,1)$ write
+\[
+  h(x)=\log\frac{H(x)}{1-x}=\log(1+x)+\sum_{n\ge3}\log(1-x^n),
+\]
+using $(1-x^2)/(1-x)=1+x$. The series converges, together with the
+series of first and second derivatives, locally uniformly on $[0,1)$
+(each is dominated by a multiple of $\sum n^2x^{n-2}$ on $[0,r]$,
+$r<1$), so $h$ is twice differentiable there with
+\[
+  h''(x)=-\frac1{(1+x)^2}-\sum_{n\ge3}
+  \frac{n\,x^{n-2}\bigl((n-1)+x^n\bigr)}{(1-x^n)^2}\ <\ 0 .
+\]
+Thus $h$ is strictly concave on $[0,1)$. Moreover $h(0)=0$,
+$h'(0)=1>0$, and $h(x)\le\log(1+x)+\log(1-x^3)\to-\infty$ as
+$x\uparrow1$. A strictly concave function that vanishes at $0$ and
+increases there is positive on some interval $(0,\delta)$, and the set
+where it is nonnegative is an interval; since $h\to-\infty$, that
+interval is $[0,x^*]$ for a unique $x^*\in(0,1)$, with $h>0$ on
+$(0,x^*)$ and $h<0$ on $(x^*,1)$. Since
+$H(x)-(1-x)=(1-x)(e^{h(x)}-1)$ has the sign of $h$ on $(0,1)$, the lemma
+follows.
+\end{proof}
+
+\begin{lemma}[Endpoint estimate]\label{lem:endpoint}
+\[
+  \int_0^1H(x)\,dx-\frac12\ \ge\ \frac{34619}{4476780}\ >\ 0 .
+\]
+\end{lemma}
+
+\begin{proof}
+For numbers $y_n\in[0,1]$ one has $\prod(1-y_n)\ge1-\sum y_n$ (the
+inequality is trivial when the right side is negative and follows by
+induction otherwise). Applying this to the factors with $n\ge6$ and
+keeping the factors $2,\dots,5$ exactly gives, for $0\le x<1$,
+\[
+  H(x)\ \ge\ \prod_{n=2}^{5}(1-x^n)\Bigl(1-\frac{x^6}{1-x}\Bigr)
+  =(1+x)(1-x^3)(1-x^4)(1-x^5)\,(1-x-x^6),
+\]
+a polynomial of degree $19$ (the bound may be negative near $1$, which
+does no harm). Exact integration gives
+\[
+  \int_0^1\prod_{n=2}^{5}(1-x^n)\,dx=\frac{96601}{180180},
+  \qquad
+  \int_0^1\frac{x^6\prod_{n=2}^{5}(1-x^n)}{1-x}\,dx=\frac{275501}{9699690},
+\]
+using $\prod_{n=2}^{5}(1-x^n)
+=1-x^2-x^3-x^4+x^6+2x^7+x^8-x^{10}-x^{11}-x^{12}+x^{14}$ and
+$(1+x)(1-x^3)(1-x^4)(1-x^5)
+=1+x-x^3-2x^4-2x^5-x^6+x^7+2x^8+2x^9+x^{10}-x^{12}-x^{13}$.
+The difference of the two integrals minus $\tfrac12$ is
+$34619/4476780$.
+\end{proof}
+
+The true value is $\int_0^1H\,dx-\tfrac12=0.01609\ldots$, so the
+estimate loses only a factor of about two; the crossing is at
+$x^*=0.567\ldots$ (Figure~\ref{fig:crossing}).
+
+\begin{proof}[Proof of Theorem~\ref{thm:running}]
+Let $R(c)=\int_0^c\bigl(H(x)-(1-x)\bigr)dx$. By
+Lemma~\ref{lem:crossing}, $R$ is strictly increasing on $[0,x^*]$ and
+strictly decreasing on $[x^*,1]$, with $R(0)=0$. Hence $R(c)>0$ for
+$c\in(0,x^*]$, and for $c\in[x^*,1]$, $R(c)\ge R(1)>0$ by
+Lemma~\ref{lem:endpoint}. So $R>0$ on $(0,1]$. By
+\eqref{eq:antitone}, $\int_0^cP_T\ge\int_0^cH$ for every $T$, and the
+theorem follows.
+\end{proof}
+
+\begin{remark}[Sets versus multisets]\label{rem:multiset}
+The function $H$ is the pointwise infimum of $P_T$ over \emph{sets}
+$T$, and that is exactly what \eqref{eq:antitone} uses. For multisets
+the inequality fails: with three copies of the exponent $2$,
+$\int_0^1(1-v^2)^3\,dv=\tfrac{16}{35}<\tfrac12$, and indeed
+$\int_0^c(1-v^2)^3\,dv<c-c^2/2$ for all $c>0.6451\ldots$. Multisets
+never arise below because $A$ is a set.
+\end{remark}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.62\textwidth, height=0.40\textwidth,
+  xlabel={$x$}, xmin=0, xmax=1,
+  ymin=-0.21, ymax=0.21, ytick={-0.2,-0.1,0,0.1,0.2},
+  yticklabel style={/pgf/number format/fixed},
+  legend style={draw=none, font=\small, at={(0.5,1.03)}, anchor=south,
+    legend columns=2, /tikz/every even column/.append style={column sep=1.5em}},
+  axis lines=left, tick label style={font=\small},
+  label style={font=\small},
+]
+\addplot[black!50, thin, forget plot] coordinates {(0,0) (1,0)};
+\addplot[blue, thick] table[x=x, y=E] {figures/crossing.dat};
+\addlegendentry{$H(x)-(1-x)$}
+\addplot[red, thick, dashed] table[x=x, y=G] {figures/crossing.dat};
+\addlegendentry{$\int_0^x\bigl(H-(1-u)\bigr)\,du$}
+\end{axis}
+\end{tikzpicture}
+\caption{The extremal case $T=\{2,3,\dots\}$ of
+Theorem~\ref{thm:running}. The integrand $H(x)-(1-x)$ crosses zero
+exactly once, at $x^*\approx0.567$, so its running integral rises and
+then falls to the endpoint value $\int_0^1H-\tfrac12\approx0.0161$,
+which is positive.}
+\label{fig:crossing}
+\end{figure}
+
+\section{Transport and strict compression}\label{sec:transport}
+
+The block exchange \eqref{eq:exchange} needs
+Theorem~\ref{thm:running} after the substitution $v=u^p$ and under a
+nonincreasing weight $P_B$. The lemmas below transport the estimate,
+and Proposition~\ref{prop:block} combines them.
+
+\begin{lemma}[Singular monotone weights]\label{lem:weight}
+Let $g$ be continuous on $[0,1]$ with $G(y)=\int_0^yg>0$ for all
+$y\in(0,1]$, and let $w$ be positive, nonincreasing and $C^1$ on
+$(0,1]$, integrable at $0$, with $w(\varepsilon)G(\varepsilon)\to0$
+as $\varepsilon\downarrow0$. Then for every $c\in(0,1]$,
+\[
+  \int_0^cw(v)g(v)\,dv\ \ge\ w(c)\,G(c)\ >\ 0 .
+\]
+\end{lemma}
+
+\begin{proof}
+Integrate by parts on $[\varepsilon,c]$:
+$\int_\varepsilon^cwg=w(c)G(c)-w(\varepsilon)G(\varepsilon)
+-\int_\varepsilon^cw'G$. The last integral is nonpositive since
+$w'\le0$ and $G\ge0$, and $w(\varepsilon)G(\varepsilon)\to0$; let
+$\varepsilon\downarrow0$ (the left side converges since $wg$ is
+integrable at $0$).
+\end{proof}
+
+\begin{corollary}[Power substitution]\label{lem:power}
+Let $p\ge1$ be an integer and let $T\subseteq\{2,3,\dots\}$ be
+nonempty, finite or infinite. Then for every $c\in(0,1]$,
+\[
+  \int_0^cE_T(u^p)\,du>0 .
+\]
+\end{corollary}
+
+\begin{proof}
+Let $G(y)=\int_0^yE_T(v)\,dv$, so $G>0$ on $(0,1]$ by
+Theorem~\ref{thm:running}, and $G(y)=O(y)$ at $0$ since $E_T$ is
+continuous on $[0,1]$. Substituting $v=u^p$,
+\[
+  \int_0^cE_T(u^p)\,du=\frac1p\int_0^{c^p}v^{1/p-1}E_T(v)\,dv,
+\]
+and $w(v)=v^{1/p-1}/p$ is positive, nonincreasing, integrable at $0$,
+with $w(\varepsilon)G(\varepsilon)=O(\varepsilon^{1/p})\to0$; apply
+Lemma~\ref{lem:weight}.
+\end{proof}
+
+\begin{lemma}[Monotone weights]\label{lem:stieltjes}
+Let $g$ be continuous on $[0,1]$ with $G(y)=\int_0^yg\ge0$ for all
+$y\in[0,1]$, and let $w$ be nonnegative, continuous and nonincreasing on
+$[0,1]$. Then for every $c\in(0,1]$,
+\[
+  \int_0^cw(u)g(u)\,du
+  =w(c)G(c)+\int_{(0,c]}G\,d(-w)\ \ge\ 0,
+\]
+where $d(-w)$ is the finite nonnegative Borel measure on $(0,c]$ with
+$d(-w)\bigl((a,b]\bigr)=w(a)-w(b)$. The left side is strictly positive
+if $G>0$ on $(0,c]$ and either $w(c)>0$ or $d(-w)$ has positive mass on
+$(0,c)$.
+\end{lemma}
+
+\begin{proof}
+Since $w$ is continuous and nonincreasing, $d(-w)$ is a finite
+nonnegative measure without atoms, of total mass $w(0)-w(c)$. As
+$G'=g$ is continuous, $\int_0^cwg\,du=\int_0^cw\,dG$, and
+Riemann--Stieltjes integration by parts with $G(0)=0$ gives the stated
+identity; both terms are nonnegative. For strictness: if $w(c)>0$ then
+$w(c)G(c)>0$; if $d(-w)$ has positive mass on $(0,c)$, then, $G$ being
+continuous and strictly positive there, $\int G\,d(-w)>0$.
+\end{proof}
+
+The Stieltjes form is needed because the weight will be an infinite
+product $P_B$, which is continuous and nonincreasing on $[0,1]$ but need
+not be $C^1$ at the endpoint; Lemma~\ref{lem:weight}, by contrast,
+allows a singularity at $0$ but needs a smooth weight.
+
+\begin{proposition}[Strict block exchange]\label{prop:block}
+Let $p\ge1$ be an integer (primality is not needed) and let
+$B,T\subseteq\{2,3,\dots\}$ be finite or
+infinite, $T$ nonempty, with $B$ disjoint from $pT=\{pt:t\in T\}$ and
+$p\notin B$. Set $A=B\cup pT$ and $A'=B\cup\{p\}$. Then for every
+$c\in(0,1]$,
+\[
+  F_c(A')<F_c(A).
+\]
+\end{proposition}
+
+\begin{proof}
+Pointwise,
+$P_A(u)-P_{A'}(u)=P_B(u)\bigl(\prod_{t\in T}(1-u^{pt})-(1-u^p)\bigr)
+=P_B(u)E_T(u^p)$, so
+\[
+  F_c(A)-F_c(A')=\int_0^cP_B(u)\,E_T(u^p)\,du .
+\]
+The weight $w=P_B$ is nonnegative, continuous and nonincreasing on
+$[0,1]$, and $G(y)=\int_0^yE_T(u^p)\,du>0$ on $(0,1]$ by
+Corollary~\ref{lem:power}. If $c<1$ then $P_B(c)>0$ and
+Lemma~\ref{lem:stieltjes} gives strict positivity. If $c=1$: either
+$B=\varnothing$, and the integral is $\int_0^1E_T(u^p)\,du>0$ directly;
+or $B\ne\varnothing$, in which case $P_B(1)=0$ and $d(-P_B)$ has total
+mass $P_B(0)-P_B(1)=1$, carried by $(0,1)$ since $P_B$ is continuous,
+while $G>0$ there; the strictness clause of Lemma~\ref{lem:stieltjes}
+applies.
+\end{proof}
+
+\section{Proofs of the extremality theorems}\label{sec:proofs}
+
+For a primitive $A$ containing a composite $m$ and a prime $p\mid m$,
+primitivity gives $p\notin A$, and the compression
+$C_p(A)=\{p\}\cup\{a\in A:p\nmid a\}$ is a block exchange in the sense
+of Proposition~\ref{prop:block} with $B=\{a\in A:p\nmid a\}$ and
+nonempty $T=\{a/p:a\in A,\ p\mid a\}$. It preserves primitivity:
+inherited nonmultiples remain incomparable, $p$ divides none of them,
+and none divides $p$.
+
+\begin{proof}[Proof of Theorem~\ref{thm:unique}]
+Let $A\subseteq\{2,\dots,N\}$ be primitive, $A\ne\Prm_N$, and fix
+$c\in(0,1]$. If $A$ contains a composite $m$, choose a prime $p\mid m$;
+then $F_c(C_p(A))<F_c(A)$ by Proposition~\ref{prop:block}. The
+compression strictly lowers the element sum, since a nonempty block of
+multiples of $p$, all at least $2p$, is replaced by $p$. Induction on
+the element sum terminates at an all-prime set $R\subseteq\Prm_N$ with
+$F_c(R)<F_c(A)$, strict inequality being secured by the first
+compression step.
+
+If instead $A$ contains no composite, then $A\subseteq\Prm_N$ with
+$A\ne\Prm_N$, and we take $R=A$. In either case, if $R\ne\Prm_N$, add
+the missing primes one at a time: for $q\in\Prm_N\setminus R$,
+\[
+  F_c(R\cup\{q\})=F_c(R)-\int_0^cx^qP_R(x)\,dx<F_c(R),
+\]
+since the integrand is strictly positive on $(0,c)$. Chaining,
+$F_c(\Prm_N)<F_c(A)$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:profile}]
+Fix $c\in(0,1]$.
+
+\emph{Lower bound.} For finite primitive $A\subseteq\{2,\dots,N\}$,
+Theorem~\ref{thm:unique} (with its trivial case $A=\Prm_N$) gives
+$F_c(A)\ge F_c(\Prm_N)$. The integrands $P_{\Prm_N}$ decrease pointwise
+to $Q$ and are bounded by $1$, so by dominated convergence
+$F_c(\Prm_N)\downarrow\int_0^cQ=\mathcal L(c)$; hence
+$F_c(A)\ge\mathcal L(c)$ for every finite primitive $A$. For infinite
+primitive $A$, the truncations $A\cap[2,N]$ are finite primitive and
+$F_c(A)=\lim_NF_c(A\cap[2,N])\ge\mathcal L(c)$, again by dominated
+convergence. Attainment at the primes is the definition:
+$F_c(\Prm)=\int_0^cQ=\mathcal L(c)$.
+
+\emph{Uniqueness.} Let $A\ne\Prm$ be primitive; we show
+$F_c(A)>\mathcal L(c)$. If $A=\varnothing$ then $F_c(A)=c>\mathcal L(c)$
+since $Q<1$ on $(0,c)$. If $A$ contains a composite $m$, choose a prime
+$p\mid m$; the compression $C_p(A)$ is a block exchange with nonempty
+$T$ (possibly infinite $T$ and $B$), preserves primitivity, and by
+Proposition~\ref{prop:block} satisfies $F_c(C_p(A))<F_c(A)$.
+Therefore $F_c(A)>F_c(C_p(A))\ge\mathcal L(c)$, the second inequality
+being the lower bound applied to the primitive set $C_p(A)$. If $A$
+contains no composite, then $A\subsetneq\Prm$; choose a prime
+$q\notin A$. Then $A\cup\{q\}$ is primitive and
+\[
+  F_c(A)-F_c(A\cup\{q\})=\int_0^cx^qP_A(x)\,dx>0,
+\]
+since $P_A>0$ on $(0,1)$, so
+$F_c(A)>F_c(A\cup\{q\})\ge\mathcal L(c)$.
+
+\emph{Non-attainment by finite sets.} Every finite primitive set differs
+from $\Prm$, so the strict inequality above proves non-attainment; the
+minimizing sequence $\Prm_N$ was exhibited in the lower bound. The
+decimal expansion of $\Lambda=\mathcal L(1)$ is certified in
+Section~\ref{sec:Lambda}.
+\end{proof}
+
+\subsection{Extremality relative to an ambient set}
+
+For $U\subseteq\{2,3,\dots\}$ let $\operatorname{Min}(U)$ be the set of
+$u\in U$ with no proper divisor in $U$. It is primitive: if $a\mid b$
+with $a\ne b$ both in $\operatorname{Min}(U)$, then $a$ is a proper
+divisor of $b$ lying in $U$.
+
+\begin{theorem}[Relative extremality]\label{thm:ambient}
+Let $U\subseteq\{2,3,\dots\}$ and let $A\subseteq U$ be primitive, finite
+or infinite, with $A\ne\operatorname{Min}(U)$. Then
+\[
+  F_c(\operatorname{Min}(U))<F_c(A)\qquad\text{for every }c\in(0,1].
+\]
+Likewise, for every $N$ and every primitive $A\subseteq U\cap[2,N]$ with
+$A\ne\operatorname{Min}(U)\cap[2,N]$,
+$F_c(\operatorname{Min}(U)\cap[2,N])<F_c(A)$ for every $c\in(0,1]$.
+\end{theorem}
+
+\begin{proof}
+Let $A\subseteq U$ be primitive and let $a\in A\setminus\operatorname{Min}(U)$.
+Choose a proper divisor $d\in U$ of $a$. No element $b\in A$ divides $d$:
+otherwise $b\mid a$ and so $b=a$ by primitivity, whence $a\mid d\mid a$
+and $d=a$. In particular $d\notin A$. Hence
+$C_d(A)=\{d\}\cup\{b\in A:d\nmid b\}$ is primitive, as in
+Section~\ref{sec:proofs}, and $C_d(A)\subseteq U$. Moreover
+$F_c(C_d(A))<F_c(A)$ by Proposition~\ref{prop:block}, applied with $p=d$,
+$B=\{b\in A:d\nmid b\}$ and $T=\{b/d:b\in A,\ d\mid b\}\ni a/d$.
+Every element of $T$ is at least $2$ because $d\notin A$.
+
+The proofs of Theorems~\ref{thm:unique} and~\ref{thm:profile} now go
+through verbatim, with the compressions $C_d$ in place of $C_p$ and
+$\operatorname{Min}(U)$ in place of the primes. In the finite case,
+compression strictly lowers the element sum, and a set contained in
+$\operatorname{Min}(U)\cap[2,N]$ is completed by adding the missing
+elements one at a time, each addition strictly lowering $F_c$. For the
+lower bound in the infinite case, the truncations $A\cap[2,N]$ are
+primitive subsets of $U\cap[2,N]$, and
+$\operatorname{Min}(U\cap[2,N])=\operatorname{Min}(U)\cap[2,N]$ because
+divisors are smaller than their multiples; dominated convergence then
+gives $F_c(\operatorname{Min}(U))\le F_c(A)$. For strictness, either
+$A\subsetneq\operatorname{Min}(U)$, and adding a missing element of
+$\operatorname{Min}(U)$ keeps the set primitive and strictly lowers
+$F_c$; or $A$ has an element outside $\operatorname{Min}(U)$, and one
+compression $C_d$ strictly lowers $F_c$. In both cases the lower bound,
+applied to the new set, finishes the proof.
+\end{proof}
+
+For $U=\{2,3,\dots\}$, $\operatorname{Min}(U)$ is the set of primes, and
+Theorem~\ref{thm:ambient} contains Theorems~\ref{thm:unique}
+and~\ref{thm:profile}. Write $\Omega(n)$ for the number of prime factors
+of $n$ counted with multiplicity and $P^-(n)$ for the least prime
+factor.
+
+\begin{corollary}\label{cor:ambient}
+For every $c\in(0,1]$ the following sets are the unique minimizers of
+$F_c$ in the stated classes.
+\begin{enumerate}
+\item[(a)] \emph{Large numbers.} Among primitive sets contained in
+$[x,\infty)$, $x\ge2$: the set
+$S_x=\{n\ge x:\ n/P^-(n)<x\}$ of integers $n\ge x$ whose largest proper
+divisor is less than $x$. It contains $[x,2x)$ and every prime $\ge x$,
+and $S_2=\Prm$.
+\item[(b)] \emph{Restricted primes.} Let $\mathcal Q$ be a nonempty set
+of primes, let $\N_k(\mathcal Q)$ be the set of integers with
+$\Omega(n)=k$ all of whose prime factors lie in $\mathcal Q$, and
+$\N_{\ge k}(\mathcal Q)=\bigcup_{j\ge k}\N_j(\mathcal Q)$. Among
+primitive subsets of $\N_{\ge k}(\mathcal Q)$: the set
+$\N_k(\mathcal Q)$. In particular
+\[
+  F_c(\N_1(\mathcal Q))<F_c(\N_2(\mathcal Q))<F_c(\N_3(\mathcal Q))<\cdots .
+\]
+\item[(c)] \emph{Hilbert numbers.} Among primitive sets of integers
+$n>1$ with $n\equiv1\pmod4$: the irreducible elements of the
+multiplicative monoid $1+4\N$ (for instance $5,9,13,21,49$).
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+In each case we identify $\operatorname{Min}(U)$ and apply
+Theorem~\ref{thm:ambient}. (a) A proper divisor of $n$ lies in
+$[x,\infty)$ if and only if the largest one, $n/P^-(n)$, is at least
+$x$. For $n<2x$ it is at most $n/2<x$. (b) If $\Omega(n)>k$, deleting
+prime factors of $n$ produces a proper divisor in $\N_k(\mathcal Q)$; if
+$\Omega(n)=k$, every proper divisor has fewer than $k$ prime factors. The
+chain follows because $\N_{k+1}(\mathcal Q)$ is a primitive subset of
+$\N_{\ge k}(\mathcal Q)$ different from the nonempty set
+$\N_k(\mathcal Q)$. (c) This is the definition of irreducibility in the
+monoid.
+\end{proof}
+
+\begin{remark}[Comparison with the additive weight]\label{rem:additive}
+For $f(A)=\sum_{a\in A}1/(a\log a)$, the problem of
+Corollary~\ref{cor:ambient}(a) is a 1966 question of Erd\H{o}s,
+S\'ark\"ozy and Szemer\'edi. Alexeev et al.~\cite{Alexeev2026} prove
+$f(A)\le1+O(1/\log x)$ for primitive $A\subseteq[x,\infty)$, by a Markov
+chain with von Mangoldt weights that moves from $n$ to $n/q$. The
+analogue of (b) for $f$ is a conjecture of Banks and
+Martin~\cite{BanksMartin2013}; it is false when $2\in\mathcal Q$ and is
+proved in~\cite{Alexeev2026} for sets of odd primes. For the product
+integrals both statements are exact and hold without restriction. The
+reason is that the compression inequality behind
+Theorem~\ref{thm:ambient} holds uniformly in the divisor $d$ and in the
+block of multiples $dT$, while linear weights must balance the lost
+multiples against the single gained divisor.
+\end{remark}
+
+\begin{remark}[Stochastic order and moments]\label{rem:icv}
+Let $M_n$ be the maximum of $n$ independent uniform $[0,1]$ variables,
+the families independent as $n$ varies, and let $Z_A=\inf_{n\in A}M_n$
+($Z_\varnothing=1$). By Borel--Cantelli the infimum is attained almost
+surely for infinite $A$, so $\Prob(Z_A>x)=P_A(x)$ and
+$F_c(A)=\E\min(Z_A,c)$. The hinge functions $\min(\,\cdot\,,c)$
+generate the increasing-concave order $\icv$~\cite{ShakedShanthikumar}:
+after replacing $\phi(0)$ by $\phi(0^+)$, which changes no expectation
+since $Z_A>0$ almost surely, every increasing concave $\phi$ on $[0,1]$
+has the form $\phi(0^+)+\alpha x+\int_{(0,1]}\min(x,t)\,\mu(dt)$ with
+$\alpha\ge0$ and $\mu\ge0$. Theorems~\ref{thm:unique}
+and~\ref{thm:profile} therefore give $Z_{\Prm_N}\icv Z_A$ for primitive
+$A\subseteq\{2,\dots,N\}$ and $Z_\Prm\icv Z_A$ for every primitive $A$,
+whereas by Proposition~\ref{prop:pointwise} the usual stochastic order
+fails.
+
+The extremality also reaches beyond concave test functions: for
+$0<k\le17/4$ the primes uniquely minimize
+$\E\min(Z_A^k,c^k)=\int_0^cku^{k-1}P_A(u)\,du$, for finite and infinite
+primitive sets alike; for instance $x+\varepsilon x^2$ singles out the
+primes for every $\varepsilon>0$. A complete proof is formalized
+(Section~\ref{sec:formal}); we sketch it. For $k\le1$ it follows from
+the case $k=1$ by integration by parts. For $k>1$ one repeats
+Sections~\ref{sec:transport} and~\ref{sec:proofs} with the weight
+$ku^{k-1}$. A compression at $p\ge k$ is handled by
+Lemma~\ref{lem:weight}. For $p<k$, put $s=k/p$ and
+$J_s(z)=\int_0^zx^{s-1}\bigl(Q(x)-(1-x)\bigr)dx$; the change in the
+integral splits into the corresponding comparison of the quotient block
+$T=\{a/p\}$ with the primes at exponent $s$, which is nonnegative by
+induction on $k$ because $T$ is itself primitive, plus $J_s(y^p)$. As in
+Lemma~\ref{lem:crossing}, $Q(x)-(1-x)$ changes sign once, so
+$J_s(z)>0$ for all $z$ once $J_s(1)>0$, and $J_{17/8}(1)>1/20000$ is an
+exact rational computation from
+$Q(x)\ge(1-x^2-x^{19})\prod_{3\le p\le17}(1-x^p)$ (script
+\texttt{moment\_certificate.py}). Three rounds give
+$[1,2]\to[1,4]\to[1,17/4]$. The method stops at
+$2\alpha_0\approx4.286$, where $\alpha_0=\sup\{b:J_b(1)>0\}$
+(numerically; $J_3(1)<0$ exactly). Some restriction on $k$ is
+necessary (open problem~2).
+\end{remark}
+
+\section{The limiting value and its truncations}\label{sec:consequences}
+
+\subsection{The limiting value}\label{sec:Lambda}
+
+For $c_0<1$ the series $\sum_pc_0^p$ converges, so the product defining
+$Q$ converges uniformly on $[0,c_0]$; hence $Q$ is continuous on $[0,1)$
+and $\mathcal L$ is differentiable on $(0,1)$ with
+$\mathcal L'(c)=Q(c)$. Write $I_N=F_1(\Prm_N)$, so that
+$I_N\downarrow\Lambda=\mathcal L(1)$. An exact rational sandwich gives
+\[
+  0.5506530112728429635779717568\ldots<\Lambda
+  <0.5506530112728429635779717571\ldots,
+\]
+certifying $26$ decimal places. The upper end is $I_{2003}$, computed
+exactly by integrating the integer coefficient vector of
+$\prod_{p\le2003}(1-x^p)$ (degree $279{,}053$) termwise. For the lower
+end, every prime $p>2003$ is odd and at least $2005$, so
+$1-\prod_{p>2003}(1-x^p)\le x^{2005}/(1-x^2)$ by the product inequality
+of Lemma~\ref{lem:endpoint}, and we subtract
+$\int_0^1x^{2005}\prod_{2<p\le2003}(1-x^p)\,dx$.
+
+\subsection{Tail asymptotics}\label{sec:tailasymp}
+Throughout, $p$ runs over primes, $a=\zeta(2)=\pi^2/6$,
+$L(t)=\log(1/t)$, and for $u,t>0$
+\[
+  S(u)=\sum_pe^{-pu},\qquad W(u)=\sum_p\log p\,e^{-pu},\qquad
+  \Phi(t)=\sum_p-\log\bigl(1-e^{-pt}\bigr),
+\]
+so that $Q(e^{-t})=e^{-\Phi(t)}$. Each summand of $\Phi$ is positive and
+decreasing in $t$, so $\Phi$ is decreasing. We use the prime number
+theorem in the form $\theta(x)=\sum_{p\le x}\log p=x+o(x)$.
+
+\begin{lemma}[Exponential prime sums]\label{lem:expsums}
+As $u\downarrow0$, $uW(u)\to1$ and $uL(u)S(u)\to1$.
+\end{lemma}
+
+\begin{proof}
+Partial summation gives
+\[
+  W(u)=\sum_{n\ge1}(\theta(n)-\theta(n-1))e^{-nu}
+  =(1-e^{-u})\sum_{n\ge1}\theta(n)e^{-nu},
+\]
+the series converging since $\theta(n)\le n\log4$. Given $\varepsilon>0$ there is $C_\varepsilon$
+with $|\theta(n)-n|\le\varepsilon n+C_\varepsilon$ for all $n$. Since
+$\sum_nne^{-nu}=e^{-u}/(1-e^{-u})^2$, we get
+\[
+  \Bigl|W(u)-\frac{e^{-u}}{1-e^{-u}}\Bigr|
+  \le\frac{\varepsilon e^{-u}}{1-e^{-u}}+C_\varepsilon .
+\]
+Multiplying by $u$ and letting $u\downarrow0$ gives $uW(u)\to1$.
+
+For $S$, fix $\delta\in(0,1)$. Primes $p\le u^{-(1-\delta)}$ contribute at
+most $u^{-(1-\delta)}=o(1/(uL(u)))$ to $S(u)$. The remaining primes have
+$\log p\ge(1-\delta)L(u)$, so they contribute at most
+$W(u)/((1-\delta)L(u))$. Hence $\limsup uL(u)S(u)\le1/(1-\delta)$.
+Conversely, primes $p\le Y=u^{-(1+\delta)}$ have $\log p\le(1+\delta)L(u)$,
+so
+\[
+  (1+\delta)L(u)S(u)\ \ge\ W(u)-\sum_{n>Y}\log n\,e^{-nu}
+  \ \ge\ W(u)-e^{-Yu/2}\sum_{n\ge1}\log n\,e^{-nu/2}.
+\]
+Here $Yu=u^{-\delta}\to\infty$ and the last sum is $O(u^{-2})$, so the
+subtracted term is $o(1/u)$ and $\liminf uL(u)S(u)\ge1/(1+\delta)$. Let
+$\delta\downarrow0$.
+\end{proof}
+
+\begin{lemma}[The prime partition exponent]\label{lem:phi}
+As $t\downarrow0$, $tL(t)\Phi(t)\to\zeta(2)$.
+\end{lemma}
+
+\begin{proof}
+Expanding $-\log(1-y)=\sum_{m\ge1}y^m/m$ and exchanging the order of
+summation (all terms are nonnegative) gives
+$\Phi(t)=\sum_{m\ge1}S(mt)/m$. Since $L(t)=L(mt)+\log m$, the $m$th term
+of $tL(t)\Phi(t)$ is
+\[
+  \frac{tL(t)S(mt)}{m}
+  =\frac{1}{m^2}\,mt\,L(mt)S(mt)\Bigl(1+\frac{\log m}{L(mt)}\Bigr),
+\]
+which tends to $1/m^2$ for each fixed $m$ by Lemma~\ref{lem:expsums}.
+For domination, $S(u)\le\sum_{n\ge1}e^{-nu}\le1/u$ for every $u>0$, and
+by Lemma~\ref{lem:expsums} there is $u_1\in(0,e^{-1}]$ with
+$uL(u)S(u)\le2$ for $0<u<u_1$. If $mt<u_1$, then $L(mt)\ge1$ and the $m$th
+term is at most $2(1+\log m)/m^2$. If $mt\ge u_1$, it is at most
+$L(t)/m^2=(L(mt)+\log m)/m^2\le(L(u_1)+\log m)/m^2$. The bound
+$(2+L(u_1))(1+\log m)/m^2$ is summable, so dominated convergence gives
+$tL(t)\Phi(t)\to\sum_m1/m^2=\zeta(2)$.
+\end{proof}
+
+Lemma~\ref{lem:phi} is the classical asymptotic for the logarithm of
+the generating function of partitions into primes; we include the short
+proof because the formalization follows it. The next lemma is
+unconditional. It compares $I_N-\Lambda$ with the function $\Phi$,
+setting
+\[
+  M_N=\inf_{t>0}\bigl(Nt+\Phi(t)\bigr).
+\]
+
+\begin{lemma}[Sandwich]\label{lem:sandwich}
+\begin{enumerate}
+\item[(a)] For every $N\ge3$, $0\le I_N-\Lambda\le e\,N^2e^{-M_N}$.
+\item[(b)] Let $q>N$ be prime, $\tau>0$ and $\varepsilon>0$. If
+$\Phi(t)\le B$ for $\tau\le t\le(1+\varepsilon)\tau$, then
+\[
+  I_N-\Lambda\ \ge\ \frac{\varepsilon\tau e^{-\tau}}{1+\varepsilon\tau}
+  \exp\bigl(-B-(1+\varepsilon)q\tau\bigr).
+\]
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Write $P_N=P_{\Prm_N}$. For $M\ge N$ and $0\le x<1$,
+\[
+  0\le P_N(x)-P_M(x)=P_N(x)\Bigl(1-\prod_{N<p\le M}(1-x^p)\Bigr)
+  \le P_N(x)\min\Bigl(1,\frac{x^{N+1}}{1-x}\Bigr),
+\]
+by the product inequality of Lemma~\ref{lem:endpoint} and
+$\sum_{n>N}x^n=x^{N+1}/(1-x)$. Integrating and letting $M\to\infty$
+($I_M\to\Lambda$) gives $I_N-\Lambda\le\sup_{0<x<1}g(x)$, where $g(x)$
+is the right side above. Write $x=e^{-t}$ with $t>0$. For $y=x^n$ with
+$n>N$ one has $-\log(1-y)\le y/(1-y)\le x^n/(1-x)$. Summing over the
+primes $p>N$ gives
+\begin{equation}\label{eq:PNphi}
+  e^{-\Phi(t)}\ \le\ P_N(e^{-t})\ \le\
+  \exp\Bigl(-\Phi(t)+\frac{e^{-(N+1)t}}{(1-e^{-t})^2}\Bigr).
+\end{equation}
+Put $\ell=\log N\ge1$ and $s=2\ell/N$. If $t\ge s$, then $t\ge2/N$ and
+$1-e^{-t}\ge t/(1+t)\ge2/(N+2)\ge1/N$, while
+$e^{-(N+1)t}\le e^{-Nt}\le N^{-2}$. So the error term in
+\eqref{eq:PNphi} is at most $1$, and
+\[
+  g(e^{-t})\le e^{1-\Phi(t)}\cdot Ne^{-Nt}\le eNe^{-M_N}.
+\]
+If $0<t<s$, then $P_N(e^{-t})\le P_N(e^{-s})$ because $P_N$ is
+nonincreasing, so $g(e^{-t})\le e^{1-\Phi(s)}$. Moreover
+$\Phi(s)\ge M_N-Ns=M_N-2\ell$, hence $g(e^{-t})\le eN^2e^{-M_N}$. This
+proves (a).
+
+For (b), let $M\ge q$. Since $\Prm_N\cup\{q\}\subseteq\Prm_M$,
+$P_N-P_M\ge P_N-P_{\Prm_N\cup\{q\}}=x^qP_N\ge0$ on $[0,1]$. On the window
+$x=e^{-t}$ with $\tau\le t\le(1+\varepsilon)\tau$, \eqref{eq:PNphi}
+gives $x^qP_N(x)\ge e^{-(1+\varepsilon)q\tau-B}$. The window has length
+$e^{-\tau}(1-e^{-\varepsilon\tau})\ge e^{-\tau}\varepsilon\tau/(1+\varepsilon\tau)$.
+Integrating and letting $M\to\infty$ proves (b).
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:tail}]
+Let $\ell=\log N$ and $\lambda_N=2\sqrt{2aN/\ell}=2\pi\sqrt{N/(3\ell)}$.
+Then $\ell=o(\lambda_N)$ and $\lambda_N=o(N)$. Fix
+$\varepsilon\in(0,\tfrac14)$. By Lemma~\ref{lem:phi} there is
+$t_0\in(0,1)$ with
+\[
+  (1-\varepsilon)a\le tL(t)\Phi(t)\le(1+\varepsilon)a
+  \qquad(0<t<t_0).
+\]
+
+\emph{Lower bound for $-\log(I_N-\Lambda)$.} We bound $Nt+\Phi(t)$ from
+below for $t>0$. If $t\ge t_0$, then $Nt+\Phi(t)\ge Nt_0$. If $t<t_0$
+and $L(t)\le(\tfrac12+\varepsilon)\ell$, then $\Phi(t)\ge b/t$ with
+$b=(1-\varepsilon)a/((\tfrac12+\varepsilon)\ell)$, so
+\[
+  Nt+\Phi(t)\ \ge\ 2\sqrt{bN}
+  =\sqrt{\frac{1-\varepsilon}{1+2\varepsilon}}\,\lambda_N .
+\]
+Otherwise $t<t_1=N^{-1/2-\varepsilon}$. Since $\Phi$ is decreasing,
+$\Phi(t)\ge\Phi(t_1)\ge(1-\varepsilon)aN^{1/2+\varepsilon}/((\tfrac12+\varepsilon)\ell)$,
+provided $t_1<t_0$. As $Nt_0$ and $N^{1/2+\varepsilon}/\ell$ are both
+$\gg\lambda_N$, we get $M_N\ge\sqrt{(1-\varepsilon)/(1+2\varepsilon)}\,\lambda_N$
+for large $N$. Lemma~\ref{lem:sandwich}(a) then gives
+\[
+  -\log(I_N-\Lambda)\ \ge\ M_N-2\ell-1
+  \ \ge\ \Bigl(\sqrt{\tfrac{1-\varepsilon}{1+2\varepsilon}}-o(1)\Bigr)\lambda_N .
+\]
+
+\emph{Upper bound.} By the prime number theorem, for large $N$ there is
+a prime $q$ with $N<q\le(1+\varepsilon)N$. Let $\tau=\sqrt{2a/(N\ell)}$,
+so that $N\tau=\lambda_N/2$ and $\tau\to0$. For
+$\tau\le t\le(1+\varepsilon)\tau$ and large $N$, we have $t<t_0$ and
+\[
+  L(t)\ \ge\ L(\tau)-\log(1+\varepsilon)
+  =\tfrac12\bigl(\ell+\log\ell-\log2a\bigr)-\log(1+\varepsilon)
+  \ \ge\ (1-\varepsilon)\tfrac{\ell}{2}.
+\]
+Hence
+$\Phi(t)\le(1+\varepsilon)a/(\tau(1-\varepsilon)\ell/2)
+=\tfrac{1+\varepsilon}{1-\varepsilon}N\tau$. By
+Lemma~\ref{lem:sandwich}(b), with $(1+\varepsilon)q\tau\le(1+\varepsilon)^2N\tau$
+and $\log(1/\tau)\le\ell$,
+\[
+  -\log(I_N-\Lambda)\ \le\
+  \Bigl(\frac{1+\varepsilon}{1-\varepsilon}+(1+\varepsilon)^2\Bigr)
+  \frac{\lambda_N}{2}+\ell+O_\varepsilon(1).
+\]
+Both constants tend to $1$ as $\varepsilon\downarrow0$, which proves the
+first statement.
+
+For the second, the prime number theorem gives $p_n\sim n\log n$, hence
+$\log p_n\sim\log n$ and $p_n/\log p_n\sim n$, so
+$\lambda_{p_n}\sim(2\pi/\sqrt3)\sqrt n$.
+\end{proof}
+
+\begin{remark}[Chebyshev bounds]\label{rem:chebyshev}
+With only $\theta(x)\asymp x$ in place of the prime number theorem, the
+same proof gives $-\log(I_N-\Lambda)\asymp\sqrt{N/\log N}$. Indeed,
+Lemmas~\ref{lem:expsums} and~\ref{lem:phi} hold with $\asymp$ in place of
+limits, and Bertrand's postulate supplies $q\in(N,2N]$. The prime number
+theorem is what fixes the constant $2\pi/\sqrt3=2\sqrt{2\zeta(2)}$.
+\end{remark}
+
+\subsection{The next prime}\label{sec:nextprime}
+Since $\Prm_N$ changes only at primes, $I_N=I_{q_N-1}$, where $q_N$ is
+the least prime exceeding $N$. The two halves of
+Lemma~\ref{lem:sandwich} are therefore sharpest when evaluated at
+$q_N$.
+
+\begin{proposition}[Next-prime sandwich]\label{prop:nextprime}
+For every $N\ge3$,
+\[
+  M_{q_N}-2\log q_N-3\ \le\ -\log(I_N-\Lambda)\ \le\ M_{q_N}+\log(q_N+1)+4 .
+\]
+\end{proposition}
+
+\begin{proof}
+Write $q=q_N\ge5$. We first record $\Phi(1)<1$: indeed
+$\Phi(1)\le\sum_{n\ge2}e^{-n}/(1-e^{-n})\le e^{-2}/((1-e^{-1})(1-e^{-2}))<1$.
+Hence $M_q\le q+\Phi(1)<q+1$.
+
+\emph{Lower bound.} Lemma~\ref{lem:sandwich}(a) with $q-1\ge3$ in place
+of $N$ gives
+$I_N-\Lambda=I_{q-1}-\Lambda\le e(q-1)^2e^{-M_{q-1}}$. Since $\Phi\ge0$,
+$(q-1)t+\Phi(t)\ge(1-1/q)(qt+\Phi(t))$ for all $t>0$, so
+$M_{q-1}\ge M_q-M_q/q>M_q-2$. Therefore
+$-\log(I_N-\Lambda)\ge M_q-2-1-2\log(q-1)$.
+
+\emph{Upper bound.} Choose $\tau>0$ with $q\tau+\Phi(\tau)\le M_q+1$;
+then $q\tau<M_q+1<q+2$, so $\tau<2$. Apply Lemma~\ref{lem:sandwich}(b)
+with this $q$ and $\tau$, with $\varepsilon=1/(q\tau)$, and with
+$B=\Phi(\tau)$, which is admissible because $\Phi$ is decreasing. Since
+$\varepsilon\tau=1/q$,
+\[
+  -\log(I_N-\Lambda)\le\Phi(\tau)+q\tau+1+\tau+\log(q+1)
+  \le M_q+\log(q+1)+4. \qedhere
+\]
+\end{proof}
+
+The proposition uses neither the prime number theorem nor any
+information about the size of $q_N-N$. To compare $M_{q_N}$ with $M_N$
+we need the shape of $M$. The function $\Phi$ is $C^1$, strictly
+convex and strictly decreasing on $(0,\infty)$, since each summand
+$-\log(1-e^{-pt})$ is, and $\Phi(t)\to\infty$ as $t\downarrow0$.
+Hence, for every real $N>0$, $Nt+\Phi(t)$ has a unique minimizer $t_N$,
+characterized by $-\Phi'(t_N)=N$. As an infimum of affine functions of
+$N$, $M$ is concave, and it has derivative $M'(N)=t_N$, which decreases
+in $N$. Consequently
+\begin{equation}\label{eq:Mslope}
+  (q-N)\,t_q\ \le\ M_q-M_N\ \le\ (q-N)\,t_N\qquad(N\le q).
+\end{equation}
+By convexity,
+$(\Phi(t)-\Phi(2t))/t\le-\Phi'(t)\le(\Phi(t/2)-\Phi(t))/(t/2)$, and
+Lemma~\ref{lem:phi} evaluates both sides. The result is
+$-\Phi'(t)\asymp1/(t^2L(t))$ as $t\downarrow0$, with constants $a/2$
+and $2a$ up to factors $1+o(1)$. Since $-\Phi'(t_N)=N$, this gives
+$t_N\asymp(N\log N)^{-1/2}$.
+
+\begin{corollary}[Second-order term and prime gaps]\label{cor:gaps}
+The following are equivalent:
+\begin{enumerate}
+\item[(i)] $-\log(I_N-\Lambda)\le M_N+O(\log N)$ for all $N\ge3$;
+\item[(ii)] $M_{q_N}-M_N=O(\log N)$;
+\item[(iii)] $p_{n+1}-p_n=O\bigl(\sqrt{p_n}\,(\log p_n)^{3/2}\bigr)$.
+\end{enumerate}
+In particular they hold under the Riemann hypothesis. Unconditionally,
+$-\log(I_N-\Lambda)=M_N+O(N^{1/40})$.
+\end{corollary}
+
+\begin{proof}
+By Bertrand's postulate $q_N\le2N$, so $\log q_N=O(\log N)$, and
+$M_{q_N}\ge M_N$. Then (i)$\Rightarrow$(ii) follows from the lower bound
+of Proposition~\ref{prop:nextprime}, and (ii)$\Rightarrow$(i) from its
+upper bound. Since $t_q\asymp t_N\asymp(N\log N)^{-1/2}$ for
+$N\le q\le2N$, \eqref{eq:Mslope} gives
+$M_{q_N}-M_N\asymp(q_N-N)(N\log N)^{-1/2}$. So (ii) is equivalent to
+$q_N-N=O(\sqrt N(\log N)^{3/2})$. This bound for all $N$ is equivalent
+to (iii): take $N=p_n$ for one direction, and use $q_N-N\le p_{n+1}-p_n$
+for $p_n\le N<p_{n+1}$ for the other. Under the Riemann hypothesis
+Cram\'er~\cite{Cramer1920} proved $p_{n+1}-p_n=O(\sqrt{p_n}\log p_n)$.
+Unconditionally, Baker, Harman and Pintz~\cite{BHP2001} proved
+$p_{n+1}-p_n=O(p_n^{0.525})$, so
+$M_{q_N}-M_N=O(N^{0.525}(N\log N)^{-1/2})=O(N^{1/40})$; combine this with
+Proposition~\ref{prop:nextprime}.
+\end{proof}
+
+Thus refining Theorem~\ref{thm:tail} to additive precision $O(\log N)$
+is a statement about gaps between primes, and it is out of reach
+unconditionally. The truncation error sees the gap after $N$ directly.
+For instance, at the record gap $31397\to31469$, $I_N$ stays constant
+for $72$ consecutive values of $N$ while $M_N$ increases.
+
+\subsection{Stability of the minimizer}\label{sec:stability}
+How much must $F_c$ increase when a primitive set omits a prime? The
+relative theorem answers this exactly.
+
+\begin{proposition}[Omitting a prime]\label{prop:omit}
+Let $p$ be prime and $B_p=(\Prm\setminus\{p\})\cup\{p^2\}$. For every
+$c\in(0,1]$, $B_p$ is the unique minimizer of $F_c$ among primitive sets
+$A$ with $p\notin A$, and
+\[
+  F_c(B_p)=\mathcal L(c)+D_c(p),\qquad
+  D_c(p)=\sum_{j=1}^{p-1}\int_0^cx^{jp}Q(x)\,dx\ \ge\
+  \Delta_c(p):=\int_0^cx^pQ(x)\,dx>0,
+\]
+with $D_c(2)=\Delta_c(2)$.
+\end{proposition}
+
+\begin{proof}
+A primitive set avoids $p$ exactly when it lies in
+$U=\{2,3,\dots\}\setminus\{p\}$, and $\operatorname{Min}(U)=B_p$: a
+composite with a prime factor $q\ne p$ has the proper divisor $q\in U$;
+$p^k$ with $k\ge3$ has the proper divisor $p^2\in U$; primes $q\ne p$ and
+$p^2$ have no proper divisor in $U$. Theorem~\ref{thm:ambient} gives the
+first statement. On $[0,1)$, $Q=(1-x^p)P_{\Prm\setminus\{p\}}$ and
+$P_{B_p}=(1-x^{p^2})P_{\Prm\setminus\{p\}}$, so
+$P_{B_p}=Q\cdot(1-x^{p^2})/(1-x^p)=Q\sum_{j=0}^{p-1}x^{jp}$; integrate.
+\end{proof}
+
+\begin{corollary}[Stability]\label{cor:stability}
+Let $A$ and $A_1,A_2,\dots$ be primitive sets.
+\begin{enumerate}
+\item[(a)] If $p\notin A$ then $F_c(A)-\mathcal L(c)\ge D_c(p)\ge\Delta_c(p)$
+  for every $c\in(0,1]$.
+\item[(b)] If $F_1(A)-\Lambda<\Delta_1(p)$ for every prime $p\le R$, then
+  $A\cap[2,R]=\Prm_R$. Since $\Delta_1$ is decreasing in $p$, it suffices
+  that $F_1(A)-\Lambda<\Delta_1(r)$ for the largest prime $r\le R$.
+\item[(c)] $F_1(A_j)\to\Lambda$ if and only if every prime belongs to $A_j$
+  for all large $j$.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+(a) is Proposition~\ref{prop:omit}. For (b), (a) shows that every prime
+$p\le R$ lies in $A$, and then no composite $m\le R$ lies in $A$, since
+its prime factors are at most $R$. For (c), if some prime is omitted
+infinitely often then (a) bounds $F_1(A_j)-\Lambda$ below along a
+subsequence. Conversely, if every prime is eventually in $A_j$, then by
+primitivity every fixed composite is eventually excluded; the indicator
+of $A_j$ converges pointwise to that of $\Prm$, so $P_{A_j}\to Q$ on
+$[0,1)$ by dominated convergence for the products, and $F_1(A_j)\to\Lambda$
+by dominated convergence for the integrals.
+\end{proof}
+
+The threshold $\Delta_1(p)$ is governed by the same saddle as the
+truncation error.
+
+\begin{proposition}[Size of the threshold]\label{prop:delta}
+For every prime, and indeed every integer, $p\ge2$,
+\[
+  M_p\ \le\ -\log\Delta_1(p)\ \le\ M_p+\log p+3,
+\]
+and consequently $-\log\Delta_1(p)\sim2\pi\sqrt{p/(3\log p)}$.
+\end{proposition}
+
+\begin{proof}
+With $x=e^{-t}$, $x^pQ(x)=e^{-(pt+\Phi(t))}\le e^{-M_p}$, which gives the
+lower bound after integrating over $(0,1)$. For the upper bound, fix
+$\tau>0$ and integrate over the window $t\in[\tau,\tau+1/p]$, where
+$pt+\Phi(t)\le p\tau+\Phi(\tau)+1$ because $\Phi$ is decreasing. The
+window has $x$-length $e^{-\tau}(1-e^{-1/p})\ge e^{-\tau}/(p+1)$, so
+\[
+  -\log\Delta_1(p)\le p\tau+\Phi(\tau)+\tau+1+\log(p+1)
+  \le p\tau+\Phi(\tau)+\tau+\frac1p+1+\log p .
+\]
+Choose $\tau$ with $p\tau+\Phi(\tau)\le M_p+\delta$, where
+$\delta=(1-\Phi(1))/3>0$ (recall $\Phi(1)<1$ from the proof of
+Proposition~\ref{prop:nextprime}). Since $M_p\le p+\Phi(1)$, this gives
+$\tau\le1+(\Phi(1)+\delta)/p$, and the bound becomes
+$M_p+\log p+2+\delta+(\Phi(1)+\delta+1)/p\le M_p+\log p+3$ for $p\ge2$.
+For the asymptotic, the proof of Theorem~\ref{thm:tail} gives
+$M_p\ge(1-o(1))\lambda_p$. Lemma~\ref{lem:sandwich}(a) gives
+$M_p\le-\log(I_p-\Lambda)+2\log p+1$, and Theorem~\ref{thm:tail} gives
+$-\log(I_p-\Lambda)\sim\lambda_p$.
+\end{proof}
+
+So a primitive set whose $F_1$ lies within
+$e^{-(1+o(1))2\pi\sqrt{R/(3\log R)}}$ of $\Lambda$ agrees with the primes
+up to $R$ (Corollary~\ref{cor:stability}(b) with the largest prime
+$r\le R$, and $r\sim R$). This scale is sharp: the truncation
+$\Prm_{r-1}$ omits $r$, and its excess is
+$I_{r-1}-\Lambda=e^{-(1+o(1))\lambda_r}$ by Theorem~\ref{thm:tail}.
+
+\subsection{Second-order terms}
+Relative refinements of Theorem~\ref{thm:tail} do not need short gaps.
+Put $a=\zeta(2)$, $\ell=\log N$, $\lambda_N=2\sqrt{2aN/\ell}
+=2\pi\sqrt{N/(3\ell)}$,
+\[
+  \sigma=\sum_{m\ge1}\frac{\log m}{m^2}=-\zeta'(2),\qquad
+  \kappa=\gamma+\frac{\sigma}{a},\qquad
+  C=\kappa+\tfrac12\log(2a)=1.7426003995\ldots,
+\]
+where $\gamma$ is Euler's constant.
+
+\begin{theorem}[Second-order tail asymptotics]\label{thm:second}
+As $N\to\infty$,
+\[
+  -\log(I_N-\Lambda)=\lambda_N\Bigl(1-\frac{\log\ell}{2\ell}+\frac{C}{\ell}
+  +O\Bigl(\frac{(\log\ell)^2}{\ell^2}\Bigr)\Bigr).
+\]
+\end{theorem}
+
+The only arithmetic input is the prime number theorem with the error
+term $\theta(x)=x+O(x/\log^2x)$, which follows from the classical
+de la Vall\'ee Poussin error term. The proof has four steps.
+
+\emph{Step 1: prime sums.} Put $L=\log(1/u)$. Then
+\[
+  S(u)=\frac1{uL}\Bigl(1+\frac{\gamma}{L}\Bigr)+O\Bigl(\frac1{uL^3}\Bigr)
+  \qquad(u\downarrow0).
+\]
+Partial summation gives
+$S(u)=\sum_{n\ge2}\theta(n)\bigl(g(n)-g(n+1)\bigr)$ with
+$g(x)=e^{-xu}/\log x$. The error term of $\theta$ contributes
+$O(\sum_n(e^{-nu}/\log^4n+nu\,e^{-nu}/\log^3n))=O(1/(uL^3))$. The main
+term equals $\sum_{n\ge2}g(n)+O(1)=\int_2^\infty g+O(1)$. Finally,
+$u\int_2^\infty g=\int_{2u}^\infty e^{-y}\,dy/(L+\log y)$; expanding
+$1/(L+\log y)$ to second order and using
+$\int_0^\infty e^{-y}\log y\,dy=\Gamma'(1)=-\gamma$ gives the claim.
+
+\emph{Step 2: the exponent.} Put $L=\log(1/t)$. Then
+\[
+  \Phi(t)=\frac{a}{tL}\Bigl(1+\frac{\kappa}{L}\Bigr)+O\Bigl(\frac1{tL^3}\Bigr)
+  \qquad(t\downarrow0).
+\]
+Indeed $\Phi(t)=\sum_mS(mt)/m$ (proof of Lemma~\ref{lem:phi}). The terms
+with $m>t^{-1/2}$ contribute $O(t^{-1/2})$, because $S(u)\le1/u$. For
+$m\le t^{-1/2}$, Step~1 applies with $L-\log m\ge L/2$ in place of $L$,
+and expanding $1/(L-\log m)$ in powers of $1/L$ gives
+$\sum_m m^{-2}\bigl(1/L+(\gamma+\log m)/L^2\bigr)/t$ up to
+$O(1/(tL^3))$. Here $\sum m^{-2}=a$ and $\sum m^{-2}\log m=\sigma$.
+
+\emph{Step 3: the saddle.} Let $u_0=\frac12(\ell+\log\ell-\log2a)$, so
+$e^{2u_0}=N\ell/(2a)$, and $\tau=e^{-u_0}$; then $N\tau=\lambda_N/2$. Put
+\[
+  S_N=1-\frac{\log\ell}{2\ell}+\frac{C}{\ell},\qquad
+  r_N=\frac{\log\ell}{\ell}.
+\]
+Since $\Phi$ is nonnegative and nonincreasing, Step~2 and
+Lemma~\ref{lem:saddle} (Appendix~\ref{app:saddle}) give a constant $K$
+such that, for all large $N$,
+\[
+  \lambda_N\bigl(S_N-Kr_N^2\bigr)\le Nt+\Phi(t)\quad(t>0),\qquad
+  N\tau+\Phi(\tau)\le\lambda_N\bigl(S_N+Kr_N^2\bigr).
+\]
+In particular $M_N=\inf_{t>0}(Nt+\Phi(t))=\lambda_N\bigl(S_N+O(r_N^2)\bigr)$.
+
+\emph{Step 4: transfer.} Lemma~\ref{lem:sandwich}(a) gives
+$-\log(I_N-\Lambda)\ge M_N-2\log N-1$. For the upper bound, the error
+term of $\theta$ provides a prime $q\in(N,N+O(N/\ell^2)]$. Apply
+Lemma~\ref{lem:sandwich}(b) with $\tau=e^{-u_0}$, $\varepsilon=\ell^{-2}$
+and $B=\Phi(\tau)$, which is admissible because $\Phi$ is decreasing:
+\[
+  -\log(I_N-\Lambda)\le N\tau+\Phi(\tau)+(q(1+\varepsilon)-N)\tau
+  +O(\log N),
+\]
+and $(q(1+\varepsilon)-N)\tau=O(N\tau/\ell^2)=O(\lambda_N/\ell^2)$.
+Since $\log N=o(\lambda_N(\log\ell/\ell)^2)$, the theorem follows.
+
+\begin{remark}[Partitions into primes]\label{rem:partitions}
+Let $p_{\Prm}(N)$ be the number of partitions of $N$ into primes, so
+that $\sum_Np_{\Prm}(N)x^N=1/Q(x)=e^{\Phi(t)}$ with $x=e^{-t}$. By Roth
+and Szekeres~\cite{RothSzekeres},
+$\log p_{\Prm}(N)\sim2\pi\sqrt{N/(3\log N)}$, so Theorem~\ref{thm:tail}
+says $-\log(I_N-\Lambda)\sim\log p_{\Prm}(N)$: both are governed by the
+saddle point of $Nt+\Phi(t)$, although the proofs above do not use
+partitions. More precisely,
+\begin{equation}\label{eq:pP}
+  \log p_{\Prm}(N)=M_N+O(\log N).
+\end{equation}
+The upper bound $\log p_{\Prm}(N)\le M_N$ holds for every $N$, since
+$p_{\Prm}(N)e^{-Nt}\le e^{\Phi(t)}$. For the lower bound, Vaughan's
+asymptotic formula~\cite{Vaughan2008}, in the saddle-point form of
+Gafni~\cite[Theorem~1.3 with $k=1$]{Gafni2021}, gives
+$p_{\Prm}(N)=e^{M_N}\bigl(2\pi\Phi''(t_N)\bigr)^{-1/2}\bigl(1+O(N^{-1/5})\bigr)$,
+with $t_N$ as in Section~\ref{sec:nextprime}, and
+$\log\Phi''(t_N)=O(\log N)$: the term $p=2$ gives
+$-\Phi'(t)\ge1/t-1$, so $t_N\ge1/(N+1)$, while $Nt_N\le M_N\le N+\Phi(1)<N+1$ (proof of Proposition~
+ef{prop:nextprime}) gives
+$t_N\le2$; on $(0,2]$,
+$4e^{-4}\le\Phi''(t)\le2(1+t)^5t^{-5}$, using
+$1-e^{-pt}\ge t/(1+t)$ and $\sum_nn^2y^n\le2/(1-y)^3$. (The prefactor
+contributes $-\tfrac34\log N+O(\log\log N)$~\cite[(1.5)]{Gafni2021}.)
+By \eqref{eq:pP} and Corollary~\ref{cor:gaps}, the difference
+$-\log(I_N-\Lambda)-\log p_{\Prm}(N)$ is governed by the gap after $N$.
+Since $\log N=o(\lambda_Nr_N^2)$, Step~3 above also gives
+$\log p_{\Prm}(N)=\lambda_N\bigl(S_N+O(r_N^2)\bigr)$. This agrees with
+the formal saddle-point expansion of Bartel, Bhaduri, Brack and
+Murthy~\cite[(43)]{BBBM2017}: their coefficient of $\log\ell/\ell$ is
+$-\tfrac12$ (which they give in place of the coefficient $+1$
+in~\cite{Vaughan2008}), and their coefficient of $1/\ell$ is
+$f_2/f_1+\log(\pi/\sqrt3)$ with $f_1=a$ and $f_2=\gamma a+\sigma$
+\cite[(23)]{BBBM2017}, which equals $\kappa+\tfrac12\log(2a)=C$.
+\end{remark}
+
+\subsection{Open problems}
+\begin{enumerate}
+\item Is there a closed form for $\Lambda$, as for the all-exponent and
+even members of the family? Is $\Lambda$ irrational?
+\item Characterize the increasing functions $\phi$ for which $\Prm_N$
+minimizes $\E\phi(Z_A)$ over primitive $A\subseteq\{2,\dots,N\}$ for
+every $N$ (notation of Remark~\ref{rem:icv}). This convex cone contains
+the increasing concave functions and the powers $x^k$, $0<k\le17/4$,
+and excludes the indicators $\mathbf 1_{(x,1]}$ for $x$ near $1$
+(Proposition~\ref{prop:pointwise}). It omits $x^k$ for large $k$: for
+finite $A$,
+$\E Z_A^k\sim\bigl(\prod_{a\in A}a\bigr)|A|!\,k^{-|A|}$ as
+$k\to\infty$, and already $\E Z_{A_9}^k<\E Z_{\Prm_9}^k$ for every
+$k\ge126$ (exact computation, \texttt{powers\_check.py}). The bound
+$2\alpha_0\approx4.286$ of Remark~\ref{rem:icv} is not sharp: for
+$N\in\{12,18,24\}$ and every maximal primitive subset of
+$\{2,\dots,N\}$, the primes give the smaller $\E\min(Z^k,c^k)$ for
+eleven exponents $k\in[5/2,20]$ and
+$c\in\{\tfrac12,\tfrac9{10},\tfrac{19}{20},\tfrac{99}{100},1\}$
+(\texttt{moments\_search.py}; 40-digit arithmetic, not a proof). What
+is the largest admissible $k$?
+\item Proposition~\ref{prop:nextprime} determines $-\log(I_N-\Lambda)$
+up to $O(\log N)$ by $M_{q_N}$, and Corollary~\ref{cor:gaps} shows that
+replacing $M_{q_N}$ by $M_N$ at this precision is a prime-gap problem.
+What is the next term relative to $M_{q_N}$? Writing $I_N-\Lambda$ as
+the sum over primes $p>N$ of $\int_0^1x^pP_{\Prm_{<p}}(x)\,dx$, applying
+Laplace's method to each term, and giving the primes near $q_N$ their
+average density on the scale $\sqrt{N\log N}$ suggests
+\[
+  -\log(I_N-\Lambda)=M_{q_N}+\tfrac14\log q_N+\tfrac34\log\log q_N
+  -\tfrac12\log\pi+\tfrac14\log(2\zeta(2))+o(1).
+\]
+Numerically, at $N=p_n$ for $20\le n\le9000$ ($N\le93{,}000$, including
+the maximal gaps after $19609$ and $31397$), the left side minus the
+right side, without the $o(1)$, lies between $-0.23$ and $0.11$ (script
+\texttt{next\_prime\_check.py}; floating point, not certified). A proof
+for every $N$ would need control of primes in intervals of length about
+$\sqrt N$ after $N$, beyond current unconditional methods. Does the
+formula hold for almost all $N$?
+\end{enumerate}
+
+\section{Formal verification}\label{sec:formal}
+
+The accompanying Lean~4/Mathlib development~\cite{Lean4,Mathlib}
+(\url{https://github.com/alerad/prime-extremality}, commit \textbf{[to be inserted]}) is built with Lean
+\texttt{v4.35.0}, Mathlib commit
+\texttt{56a00585\allowbreak 5ea17e0b\allowbreak 0958f73e\allowbreak c801ae14\allowbreak 0b0a1679},
+the \href{https://github.com/alerad/leancert}{LeanCert library}
+(Bernstein certificates, interval arithmetic and exact $q$-product
+integrals), and the prime number theorem imported,
+unmodified, from the PrimeNumberTheoremAnd project~\cite{PNTplus} at
+commit \texttt{127b50e5}. It formalizes, for every $c\in(0,1]$ and for
+finite and infinite sets: Theorems~\ref{thm:unique},
+\ref{thm:profile}, \ref{thm:running} (by the route of
+Section~\ref{sec:running}) and~\ref{thm:ambient};
+Propositions~\ref{prop:pointwise} and~\ref{prop:block}; the
+increasing-concave minimality of Remark~\ref{rem:icv} for finite sets
+and its moment extension for all real $0<k\le17/4$, including the exact
+values of $J_{17/8}(1)$ and $J_3(1)$; the $26$ digits of $\Lambda$;
+Lemmas~\ref{lem:expsums}, \ref{lem:phi}, \ref{lem:sandwich}
+and~\ref{lem:saddle}; Theorems~\ref{thm:tail} and~\ref{thm:second};
+Proposition~\ref{prop:omit}, Corollary~\ref{cor:stability} and
+Proposition~\ref{prop:delta}; and the comparison at $k=126$ in open
+problem~2. The prime number theorem enters through
+\texttt{chebyshev\_asymptotic} and \texttt{nth\_prime\_asymp} for
+Theorem~\ref{thm:tail}, and through \texttt{MediumPNT} together with
+Mathlib's bound for $\psi-\theta$ for the hypothesis
+$\theta(x)=x+O(x/\log^2x)$ of Theorem~\ref{thm:second}. Not formalized
+are the probabilistic model of Remark~\ref{rem:icv} itself, the infinite
+case of its increasing-concave statement, the numerical value of
+$\alpha_0$, the identification of $\operatorname{Min}(U)$ in
+Corollary~\ref{cor:ambient}, Proposition~\ref{prop:nextprime},
+Corollary~\ref{cor:gaps}, and Remarks~\ref{rem:chebyshev},
+\ref{rem:partitions} and~\ref{rem:additive}. Some Lean proofs take
+equivalent routes (for instance dominated convergence in place of
+Stieltjes integration by parts); the repository lists each deviation and
+maps every result to its Lean declaration. An earlier
+artifact~\cite{ProductInvariants} verified a Bernstein-certificate proof
+of Theorem~\ref{thm:running}.
+
+All of these results depend only on the axioms \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound}, except the digits of
+$\Lambda$ and the comparison in open problem~2, whose finite rational
+computations use \texttt{native\_decide} and hence trust Lean's
+compiler.
+
+\appendix
+\section{The saddle estimate}\label{app:saddle}
+
+This appendix proves the estimate used in Step~3 of the proof of
+Theorem~\ref{thm:second}. The lemma is stated for an abstract function
+$\Phi$; its Lean counterpart is \texttt{saddle\_second\_order} in
+\texttt{Tail/Saddle2.lean}, and the proof below follows it.
+
+\begin{lemma}[Second-order saddle estimate]\label{lem:saddle}
+Let $a>0$, $\kappa\in\mathbb R$, $K_1\ge0$ and $t_0\in(0,1)$, and let
+$\Phi:(0,\infty)\to[0,\infty)$ be nonincreasing with
+\begin{equation}\label{eq:saddle-hyp}
+  \Bigl|\Phi(t)-\frac{a}{tL}\Bigl(1+\frac{\kappa}{L}\Bigr)\Bigr|
+  \le\frac{K_1}{tL^3}\qquad(0<t<t_0,\ L=\log(1/t)).
+\end{equation}
+For $N>e$ put $\ell=\log N$, $\lambda_N=2\sqrt{2aN/\ell}$,
+$u_0=\frac12(\ell+\log\ell-\log2a)$, $\tau=e^{-u_0}$,
+$C=\kappa+\frac12\log(2a)$,
+$S_N=1-\log\ell/(2\ell)+C/\ell$ and $r_N=\log\ell/\ell$. There is a
+constant $K$, depending only on $a,\kappa,K_1$, such that for all
+sufficiently large $N$:
+\begin{enumerate}
+\item[(i)] $Nt+\Phi(t)\ge\lambda_N(S_N-Kr_N^2)$ for every $t>0$;
+\item[(ii)] $N\tau+\Phi(\tau)\le\lambda_N(S_N+Kr_N^2)$, and
+  $N\tau=\lambda_N/2$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\emph{Notation.} Write $K_0=K_1/a$ and
+$h_\pm(u)=1/u+\kappa/u^2\pm K_0/u^3$. In the variable $u=\log(1/t)$,
+\eqref{eq:saddle-hyp} says
+\begin{equation}\label{eq:saddle-hpm}
+  a e^uh_-(u)\le\Phi(e^{-u})\le a e^uh_+(u)\qquad(u>\log(1/t_0)).
+\end{equation}
+Put $X=e^{u_0}$ and $A=N/X$. Then $X^2=N\ell/(2a)$, so $A=2aX/\ell$,
+$A^2=2aN/\ell$ and $\lambda_N=2A$. For $t=e^{-(u_0+v)}$,
+\begin{equation}\label{eq:saddle-scale}
+  Nt=Ae^{-v},\qquad ae^{u_0+v}=A\,\tfrac{\ell}{2}\,e^{v}.
+\end{equation}
+Let $r=r_N$, $D=1+|\log2a|$, $x=(2u_0-\ell)/\ell=(\log\ell-\log2a)/\ell$
+and $p=\ell/(2u_0)=1/(1+x)$. Then $S_N=1-x/2+\kappa/\ell$. We take $N$
+so large that $\log\ell\ge1$ and
+\begin{equation}\label{eq:saddle-large}
+  (D+|\kappa|+2)\,r\le\tfrac1{40},\qquad
+  u_0\ge U:=20(|\kappa|+K_0)+1,\qquad Xt_1\ge4,
+\end{equation}
+where $t_1=\min(t_0,e^{-U})$. Then $1/\ell\le r\le1/80$, so $\ell\ge80$;
+$|x|\le Dr\le1/40$, so $p\le2$; and $S_N\le\frac65$.
+
+\emph{Algebra at $u_0$.} Put $P_\pm=\frac\ell2h_\pm(u_0)
+=p+2\kappa p^2/\ell\pm4K_0p^3/\ell^2$. Using $p=1-x+x^2p$ and
+$p^2-1=-xp(p+1)$,
+\[
+  1+P_\pm-2S_N=x^2p+\frac{2\kappa(p^2-1)}{\ell}\pm\frac{4K_0p^3}{\ell^2},
+\]
+so that
+\begin{equation}\label{eq:saddle-alg}
+  |1+P_\pm-2S_N|\le K_2r^2,\qquad K_2=2D^2+12|\kappa|D+32K_0 .
+\end{equation}
+Similarly $\delta=P_--1=(p-1)+2\kappa p^2/\ell-4K_0p^3/\ell^2$
+satisfies $|\delta|\le K_3r$ with $K_3=2D+8|\kappa|+32K_0$, because
+$|p-1|=|x|p$.
+
+\emph{Two elementary inequalities.} First, $e^{-v}+e^v\ge2+v^2$ for
+all real $v$, and $|e^v-1|\le2|v|$ for $v\le1$ (for $0\le v\le1$,
+$e^v-1\le v(e-1)$; for $v<0$, $1-e^v\le\min(1,|v|)$). Hence for $v\le1$,
+$\delta\in\mathbb R$ and $B\ge0$,
+\begin{equation}\label{eq:saddle-quad}
+  e^{-v}+(1+\delta)e^v-B\max(v,0)
+  \ge2+\delta+\tfrac{v^2}2-(2|\delta|+B)|v|
+  \ge2+\delta-\tfrac12(2|\delta|+B)^2 .
+\end{equation}
+Second, $h_-$ is nonincreasing on $[U,\infty)$, since
+$h_-'(u)=-u^{-2}(1+2\kappa/u-3K_0/u^2)$ and
+$(2|\kappa|+3K_0)/u<1$ there. Moreover, for $u_0>0$ and $0\le v\le1$,
+\begin{equation}\label{eq:saddle-step}
+  h_-(u_0+v)\ge h_-(u_0)-\frac{v}{u_0^2}-\frac{2|\kappa|}{u_0^3},
+\end{equation}
+because $1/(u_0+v)\ge1/u_0-v/u_0^2$,
+$0\le u_0^{-2}-(u_0+v)^{-2}\le2u_0^{-3}$ and
+$(u_0+v)^{-3}\le u_0^{-3}$.
+
+\emph{Proof of (i).} Fix $t>0$.
+
+\emph{Case $t\ge t_1$.} Since $\Phi\ge0$,
+$Nt+\Phi(t)\ge Nt_1=AXt_1\ge4A=2\lambda_N\ge\lambda_NS_N$.
+
+\emph{Case $t<t_1$.} Write $t=e^{-(u_0+v)}$; then $u_0+v>U$ and
+$t<t_0$, so \eqref{eq:saddle-hpm} and \eqref{eq:saddle-scale} give
+\[
+  Nt+\Phi(t)\ge A\Bigl(e^{-v}+\tfrac\ell2e^vh_-(u_0+v)\Bigr).
+\]
+If $v\le0$, then $U<u_0+v\le u_0$ and monotonicity of $h_-$ gives
+$\frac\ell2h_-(u_0+v)\ge P_-$, so by \eqref{eq:saddle-quad} with $B=0$,
+$Nt+\Phi(t)\ge A(2+\delta-2\delta^2)$. If $0<v\le1$, then
+\eqref{eq:saddle-step} and $e^v\le3$ give
+$\frac\ell2e^vh_-(u_0+v)\ge P_-e^v-Bv-E$ with
+$B=3\ell/(2u_0^2)=6p^2/\ell\le24r$ and
+$E=3|\kappa|\ell/u_0^3=24|\kappa|p^3/\ell^2\le192|\kappa|r^2$; by
+\eqref{eq:saddle-quad},
+$Nt+\Phi(t)\ge A\bigl(2+\delta-\frac12(2|\delta|+B)^2-E\bigr)$. In both
+subcases, by \eqref{eq:saddle-alg} and $2+\delta=1+P_-$,
+\[
+  Nt+\Phi(t)\ge A\Bigl(2S_N-K_2r^2-\tfrac12(2K_3+24)^2r^2
+  -192|\kappa|r^2\Bigr)=\lambda_N(S_N-Kr^2),
+\]
+with $K=\frac12K_2+\frac14(2K_3+24)^2+96|\kappa|$. Finally, if $v>1$,
+put $t_2=e^{-(u_0+1)}<t_1$. Since $\Phi$ is nonincreasing,
+\eqref{eq:saddle-hpm} and \eqref{eq:saddle-scale} give
+\[
+  \Phi(t)\ge\Phi(t_2)\ge Ae\,\tfrac\ell2h_-(u_0+1)
+  =Ae\,\frac{\ell}{2(u_0+1)}\bigl(1+\kappa q-K_0q^2\bigr),
+  \qquad q=\frac1{u_0+1}.
+\]
+Here $\ell/(2(u_0+1))=\ell/(\ell(1+x)+2)\ge\frac{19}{20}$ because
+$x\le\frac1{40}$ and $\ell\ge80$, and
+$1+\kappa q-K_0q^2\ge1-(|\kappa|+K_0)q\ge\frac{19}{20}$ because
+$u_0+1\ge U$. Hence $\Phi(t)\ge(\frac{19}{20})^2eA>2.4A\ge\lambda_NS_N$.
+This proves (i), since $S_N\ge S_N-Kr^2$.
+
+\emph{Proof of (ii).} By \eqref{eq:saddle-large},
+$\tau=1/X\le t_1/4<t_0$, and $N\tau=A=\lambda_N/2$. By
+\eqref{eq:saddle-hpm} and \eqref{eq:saddle-scale} with $v=0$,
+$\Phi(\tau)\le aXh_+(u_0)=AP_+$, so by \eqref{eq:saddle-alg}
+\[
+  N\tau+\Phi(\tau)\le A(1+P_+)\le A(2S_N+K_2r^2)
+  \le\lambda_N(S_N+Kr^2). \qedhere
+\]
+\end{proof}
+
+\section*{Declarations}
+\emph{Use of AI.} The author used Claude Code (Anthropic) in
+developing parts of the Lean code, the verification scripts, and the
+manuscript. The author checked the mathematical arguments and assumes
+responsibility for the paper.
+
+\emph{Competing interests.} The author declares no competing
+interests.
+
+{\sloppy\emph{Data availability.} The Lean development of
+Section~\ref{sec:formal} and the supplementary scripts
+\texttt{crossing\_endpoint.py}, \texttt{powers\_check.py},
+\texttt{moment\_certificate.py}, \texttt{moments\_search.py},
+\texttt{tail\_\allowbreak asymptotic\_\allowbreak check.py} and
+\texttt{next\_\allowbreak prime\_\allowbreak check.py} are publicly
+available at \url{https://github.com/alerad/prime-extremality} (archived at \textbf{[archive DOI to be inserted]}).\par}
+
+\begin{thebibliography}{99}
+
+\bibitem{Alexeev2026}
+B.~Alexeev, K.~Barreto, Y.~Li, J.~D. Lichtman, L.~Price, J.~I. Shah,
+Q.~Tang and T.~Tao,
+Primitive sets and von Mangoldt chains: Erd\H{o}s Problem \#1196 and
+beyond, arXiv:2605.00301 (2026),
+\url{https://arxiv.org/abs/2605.00301}.
+
+\bibitem{BHP2001}
+R.~C. Baker, G.~Harman and J.~Pintz,
+The difference between consecutive primes, II,
+\emph{Proc. London Math. Soc. (3)} \textbf{83} (2001), 532--562,
+\url{https://doi.org/10.1112/plms/83.3.532}.
+
+\bibitem{BanksMartin2013}
+W.~D. Banks and G.~Martin,
+Optimal primitive sets with restricted primes,
+\emph{Integers} \textbf{13} (2013), Paper A69,
+\url{https://math.colgate.edu/~integers/n69/n69.pdf}.
+
+\bibitem{BBBM2017}
+J.~Bartel, R.~K. Bhaduri, M.~Brack and M.~V.~N. Murthy,
+On the asymptotic prime partitions of integers,
+\emph{Phys. Rev. E} \textbf{95} (2017), 052108,
+\url{https://doi.org/10.1103/PhysRevE.95.052108}.
+
+\bibitem{Cramer1920}
+H.~Cram\'er,
+Some theorems concerning prime numbers,
+\emph{Ark. Mat. Astr. Fys.} \textbf{15} (1920), no.~5, 1--33.
+
+\bibitem{Gafni2021}
+A.~Gafni,
+Partitions into prime powers,
+\emph{Mathematika} \textbf{67} (2021), no.~2, 468--488,
+\url{https://doi.org/10.1112/mtk.12082}.
+
+\bibitem{Lean4}
+L.~de~Moura and S.~Ullrich,
+The Lean 4 theorem prover and programming language,
+in \emph{Automated Deduction -- CADE 28}, Lecture Notes in Comput.
+Sci.\ 12699, Springer, 2021, 625--635,
+\url{https://doi.org/10.1007/978-3-030-79876-5_37}.
+
+\bibitem{Lichtman2023}
+J.~D. Lichtman,
+A proof of the Erd\H{o}s primitive set conjecture,
+\emph{Forum Math. Pi} \textbf{11} (2023), e18,
+\url{https://doi.org/10.1017/fmp.2023.16}.
+
+\bibitem{LichtmanPomerance2019}
+J.~D. Lichtman and C.~Pomerance,
+The Erd\H{o}s conjecture for primitive sets,
+\emph{Proc. Amer. Math. Soc. Ser. B} \textbf{6} (2019), 1--14,
+\url{https://doi.org/10.1090/bproc/40}.
+
+\bibitem{Mathlib}
+The mathlib Community,
+The Lean mathematical library,
+in \emph{CPP 2020}, ACM, 2020, 367--381,
+\url{https://doi.org/10.1145/3372885.3373824}.
+
+\bibitem{Mulcrone1956}
+T.~F. Mulcrone,
+Definite integral of an infinite product (Solution to Problem 4614),
+\emph{Amer. Math. Monthly} \textbf{63} (1956), no.~2, 127--128,
+\url{https://doi.org/10.2307/2306451}.
+
+\bibitem{PNTplus}
+A.~Kontorovich and T.~Tao,
+\emph{Prime Number Theorem and More}, Lean project,
+\url{https://github.com/AlexKontorovich/PrimeNumberTheoremAnd}.
+
+\bibitem{ProductInvariants}
+A.~Radisic,
+\texttt{productinvariants}, Lean~4 artifact,
+\url{https://github.com/alerad/productinvariants}, commit
+\texttt{d3b18c06}; archived at
+\url{https://doi.org/10.5281/zenodo.21191624}.
+
+\bibitem{RothSzekeres}
+K.~F. Roth and G.~Szekeres,
+Some asymptotic formulae in the theory of partitions,
+\emph{Quart. J. Math. Oxford Ser.} \textbf{5} (1954), 241--259,
+\url{https://doi.org/10.1093/qmath/5.1.241}.
+
+\bibitem{Sandham1954}
+H.~F. Sandham,
+Problem 4614,
+\emph{Amer. Math. Monthly} \textbf{61} (1954), no.~10, 718,
+\url{https://doi.org/10.2307/2307339}.
+
+\bibitem{ShakedShanthikumar}
+M.~Shaked and J.~G. Shanthikumar,
+\emph{Stochastic Orders},
+Springer Series in Statistics, Springer, New York, 2007,
+\url{https://doi.org/10.1007/978-0-387-34675-5}.
+
+\bibitem{Vaughan2008}
+R.~C. Vaughan,
+On the number of partitions into primes,
+\emph{Ramanujan J.} \textbf{15} (2008), no.~1, 109--121,
+\url{https://doi.org/10.1007/s11139-007-9037-5}.
+
+\end{thebibliography}
+
+\medskip
+\noindent 2020 \emph{Mathematics Subject Classification.} Primary
+11B75, 11N05; Secondary 11P82, 06A07, 26D15, 60E15, 11Y60, 68V20.
+
+\smallskip
+\noindent\textit{Email address}: \texttt{aleloid@proton.me}
+
+\end{document}
