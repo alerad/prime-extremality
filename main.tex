@@ -5,6 +5,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{orcidlink}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
@@ -21,7 +22,7 @@
 \newcommand{\icv}{\preceq_{\mathrm{icv}}}
 
 \title{Prime extremality for product integrals\\ over primitive sets}
-\author{Alejandro Radisic\thanks{ORCID: \href{https://orcid.org/0009-0001-7612-1082}{0009-0001-7612-1082}.}}
+\author{Alejandro Radisic\,\orcidlink{0009-0001-7612-1082}\\[2pt] {\small ORCID: \href{https://orcid.org/0009-0001-7612-1082}{0009-0001-7612-1082}}}
 \date{October 2026}
 
 \emergencystretch=2em
@@ -41,7 +42,8 @@ $T\subseteq\{2,3,\dots\}$, which gives a strict compression replacing
 the multiples of an integer $d$ by $d$. Consequently the
 divisibility-minimal elements of any set $U$ uniquely minimize $F_c$
 among primitive subsets of $U$. The minimum at $c=1$ is
-$\Lambda=0.5506530112\ldots$. The truncation error satisfies
+$\Lambda=0.5506530112\ldots$. Writing $I_N$ for the value of $F_1$ at
+the primes up to $N$, the truncation error satisfies
 $-\log(I_N-\Lambda)\sim2\pi\sqrt{N/(3\log N)}$, with two further terms
 from the prime number theorem, and to within $O(\log N)$ it is fixed by
 the least prime exceeding $N$. The main results are formally verified
@@ -651,7 +653,7 @@ $\N_k(\mathcal Q)$. In particular
 \]
 \item[(c)] \emph{Hilbert numbers.} Among primitive sets of integers
 $n>1$ with $n\equiv1\pmod4$: the irreducible elements of the
-multiplicative monoid $1+4\N$ (for instance $5,9,13,21,49$).
+multiplicative monoid $\{1,5,9,13,\dots\}=1+4\mathbb Z_{\ge0}$ (for instance $5,9,13,21,49$).
 \end{enumerate}
 \end{corollary}
 
@@ -685,11 +687,17 @@ multiples against the single gained divisor.
 \end{remark}
 
 \begin{remark}[Stochastic order and moments]\label{rem:icv}
-Let $M_n$ be the maximum of $n$ independent uniform $[0,1]$ variables,
-the families independent as $n$ varies, and let $Z_A=\inf_{n\in A}M_n$
-($Z_\varnothing=1$). By Borel--Cantelli the infimum is attained almost
-surely for infinite $A$, so $\Prob(Z_A>x)=P_A(x)$ and
-$F_c(A)=\E\min(Z_A,c)$. The hinge functions $\min(\,\cdot\,,c)$
+Let $Y_n$ be the maximum of $n$ independent uniform $[0,1]$ variables,
+the families independent as $n$ varies, and let $Z_A=\inf_{n\in A}Y_n$
+($Z_\varnothing=1$). Since $\Prob(Y_n\le x)=x^n$, for infinite $A$ and
+every $x<1$ we have $\sum_{n\in A}\Prob(Y_n\le x)<\infty$, so by
+Borel--Cantelli almost surely only finitely many $n\in A$ have
+$Y_n\le x$. Taking $x\uparrow1$ along a sequence, $Y_n\to1$ along $A$
+almost surely, while every $Y_n<1$ almost surely; hence the infimum is
+a minimum almost surely. Therefore $\{Z_A>x\}=\{Y_n>x\text{ for all }n\in A\}$
+up to a null set, and independence gives
+$\Prob(Z_A>x)=\prod_{n\in A}(1-x^n)=P_A(x)$ for $0\le x<1$. Hence
+$F_c(A)=\int_0^c\Prob(Z_A>x)\,dx=\E\min(Z_A,c)$. The hinge functions $\min(\,\cdot\,,c)$
 generate the increasing-concave order $\icv$~\cite{ShakedShanthikumar}:
 after replacing $\phi(0)$ by $\phi(0^+)$, which changes no expectation
 since $Z_A>0$ almost surely, every increasing concave $\phi$ on $[0,1]$
@@ -744,7 +752,8 @@ $\prod_{p\le2003}(1-x^p)$ (degree $279{,}053$) termwise. For the lower
 end, every prime $p>2003$ is odd and at least $2005$, so
 $1-\prod_{p>2003}(1-x^p)\le x^{2005}/(1-x^2)$ by the product inequality
 of Lemma~\ref{lem:endpoint}, and we subtract
-$\int_0^1x^{2005}\prod_{2<p\le2003}(1-x^p)\,dx$.
+$\int_0^1x^{2005}\prod_{2<p\le2003}(1-x^p)\,dx$ (the denominator $1-x^2$
+cancels the factor $p=2$ of $P_{\Prm_{2003}}$).
 
 \subsection{Tail asymptotics}\label{sec:tailasymp}
 Throughout, $p$ runs over primes, $a=\zeta(2)=\pi^2/6$,
@@ -1269,14 +1278,14 @@ formula hold for almost all $N$?
 \section{Formal verification}\label{sec:formal}
 
 The accompanying Lean~4/Mathlib development~\cite{Lean4,Mathlib}
-(\url{https://github.com/alerad/prime-extremality}, release \texttt{v1.0.1}, commit \texttt{f6caaa43},~\cite{Artifact}) is built with Lean
+(\url{https://github.com/alerad/prime-extremality}, release \texttt{v1.0.2}~\cite{Artifact}) is built with Lean
 \texttt{v4.35.0}, Mathlib commit
 \texttt{56a00585\allowbreak 5ea17e0b\allowbreak 0958f73e\allowbreak c801ae14\allowbreak 0b0a1679},
 the \href{https://github.com/alerad/leancert}{LeanCert library}
 (Bernstein certificates, interval arithmetic and exact $q$-product
 integrals), and the prime number theorem imported,
 unmodified, from the PrimeNumberTheoremAnd project~\cite{PNTplus} at
-commit \texttt{127b50e5}. It formalizes, for every $c\in(0,1]$ and for
+commit \texttt{127b50e3}. It formalizes, for every $c\in(0,1]$ and for
 finite and infinite sets: Theorems~\ref{thm:unique},
 \ref{thm:profile}, \ref{thm:running} (by the route of
 Section~\ref{sec:running}) and~\ref{thm:ambient};
@@ -1443,7 +1452,7 @@ $\Phi(\tau)\le aXh_+(u_0)=AP_+$, so by \eqref{eq:saddle-alg}
 \end{proof}
 
 \section*{Declarations}
-\emph{Use of AI.} The author used Claude Code (Anthropic) in
+\emph{Use of AI.} The author used Codex and Claude Code in
 developing parts of the Lean code, the verification scripts, and the
 manuscript. The author checked the mathematical arguments and assumes
 responsibility for the paper.
@@ -1457,7 +1466,7 @@ Section~\ref{sec:formal} and the supplementary scripts
 \texttt{moment\_certificate.py}, \texttt{moments\_search.py},
 \texttt{tail\_\allowbreak asymptotic\_\allowbreak check.py} and
 \texttt{next\_\allowbreak prime\_\allowbreak check.py} are publicly
-available at \url{https://github.com/alerad/prime-extremality} and archived at \url{https://doi.org/10.5281/zenodo.23537236}~\cite{Artifact}.\par}
+available at \url{https://github.com/alerad/prime-extremality} and archived at \url{https://doi.org/10.5281/zenodo.23537235}~\cite{Artifact}.\par}
 
 \begin{thebibliography}{99}
 
@@ -1537,8 +1546,8 @@ A.~Kontorovich and T.~Tao,
 A.~Radisic,
 \texttt{prime-extremality}, Lean~4 artifact,
 \url{https://github.com/alerad/prime-extremality}, release
-\texttt{v1.0.1}, commit \texttt{f6caaa43}; archived at
-\url{https://doi.org/10.5281/zenodo.23537236}.
+\texttt{v1.0.2}; archived at
+\url{https://doi.org/10.5281/zenodo.23537235}.
 
 \bibitem{ProductInvariants}
 A.~Radisic,

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.9.17)  21 OCT 2026 18:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.9.17)  22 OCT 2026 14:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -730,34 +730,60 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 84.
 )
 \Hy@SectionHShift=\skip57
+) (/Users/yales/texlive/2026/texmf-dist/tex/latex/orcidlink/orcidlink.sty
+Package: orcidlink 2026/04/09 v1.1.1 Add explicit etoolbox dependency.
+
+(/Users/yales/texlive/2026/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librar
+ies/tikzlibrarysvg.path.code.tex
+File: tikzlibrarysvg.path.code.tex 2026-08-01 v3.1.12 (3.1.12)
+
+(/Users/yales/texlive/2026/texmf-dist/tex/generic/pgf/libraries/pgflibrarysvg.p
+ath.code.tex
+File: pgflibrarysvg.path.code.tex 2026-08-01 v3.1.12 (3.1.12)
+
+(/Users/yales/texlive/2026/texmf-dist/tex/generic/pgf/modules/pgfmoduleparser.c
+ode.tex
+File: pgfmoduleparser.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgfparserdef@arg@count=\count343
 )
-\c@theorem=\count343
+\pgf@lib@svg@subpath@initial@x=\dimen307
+\pgf@lib@svg@subpath@initial@y=\dimen308
+\pgf@lib@svg@last@x=\dimen309
+\pgf@lib@svg@last@y=\dimen310
+\pgf@lib@svg@last@c@x=\dimen311
+\pgf@lib@svg@last@c@y=\dimen312
+\pgf@lib@svg@count=\count344
+\pgf@lib@svg@max@num=\count345
+))
+\@curXheight=\skip58
+)
+\c@theorem=\count346
 
 (/Users/yales/texlive/2026/texmf-dist/tex/latex/l3kernel/l3backend-pdftex.def
 File: l3backend-pdftex.def 2026-08-10 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count344
+\l__color_backend_stack_int=\count347
 )
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -795,16 +821,16 @@ LaTeX Font Info:    ... okay on input line 28.
 
 (/Users/yales/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count345
-\scratchdimen=\dimen307
+\scratchcounter=\count348
+\scratchdimen=\dimen313
 \scratchbox=\box67
-\nofMPsegments=\count346
-\nofMParguments=\count347
+\nofMPsegments=\count349
+\nofMParguments=\count350
 \everyMPshowfont=\toks46
-\MPscratchCnt=\count348
-\MPscratchDim=\dimen308
-\MPnumerator=\count349
-\makeMPintoPDFobject=\count350
+\MPscratchCnt=\count351
+\MPscratchDim=\dimen314
+\MPnumerator=\count352
+\makeMPintoPDFobject=\count353
 \everyMPtoPDFconversion=\toks47
 )
 (/Users/yales/texlive/2026/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
@@ -819,18 +845,18 @@ e
 Package pgfplots notification 'compat/show suggested version=true': document ha
 s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 
-Package hyperref Info: Link coloring ON on input line 28.
+Package hyperref Info: Link coloring ON on input line 29.
 (./main.out) (./main.out)
 \@outlinefile=\write4
 \openout4 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 33.
 
 
 (/Users/yales/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
 
 
 (/Users/yales/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -842,28 +868,22 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [5]
 PGFPlots: reading {figures/crossing.dat}
 PGFPlots: reading {figures/crossing.dat}
- [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
-Underfull \hbox (badness 1546) in paragraph at lines 1271--1307
-\OT1/cmr/m/n/10.95 Math-lib com-mit \OT1/cmtt/m/n/10.95 56a005855ea17e0b0958f73
-ec801ae140b0a1679\OT1/cmr/m/n/10.95 , the [][]LeanCert li-brary[][]
- []
-
-[18] [19] [20]
-Underfull \hbox (badness 1472) in paragraph at lines 1537--1542
+ [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
+Underfull \hbox (badness 1472) in paragraph at lines 1546--1551
 []\OT1/cmr/m/n/10.95 A. Ra-disic, \OT1/cmtt/m/n/10.95 prime-extremality\OT1/cmr
 /m/n/10.95 , Lean 4 ar-ti-fact, [][]$\OT1/cmtt/m/n/10.95 https : / / github . c
 om / alerad /
  []
 
 
-Underfull \hbox (badness 1472) in paragraph at lines 1544--1549
+Underfull \hbox (badness 1472) in paragraph at lines 1553--1558
 []\OT1/cmr/m/n/10.95 A. Ra-disic, \OT1/cmtt/m/n/10.95 productinvariants\OT1/cmr
 /m/n/10.95 , Lean 4 ar-ti-fact, [][]$\OT1/cmtt/m/n/10.95 https : / / github . c
 om / alerad /
  []
 
 
-Underfull \hbox (badness 1668) in paragraph at lines 1544--1549
+Underfull \hbox (badness 1668) in paragraph at lines 1553--1558
 \OT1/cmtt/m/n/10.95 productinvariants$[][]\OT1/cmr/m/n/10.95 , com-mit \OT1/cmt
 t/m/n/10.95 d3b18c06\OT1/cmr/m/n/10.95 ; archived at [][]$\OT1/cmtt/m/n/10.95 h
 ttps : / / doi . org / 10 . 5281 /
@@ -878,41 +898,38 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 8E00B66EC7FFDD9FC7377EB042842545;3897.
  ) 
 Here is how much of TeX's memory you used:
- 31687 strings out of 468580
- 746692 string characters out of 5444722
- 1398905 words of memory out of 5000000
- 60223 multiletter control sequences out of 15000+600000
- 641498 words of font info for 92 fonts, out of 8000000 for 9000
+ 32082 strings out of 468580
+ 759388 string characters out of 5444722
+ 1408022 words of memory out of 5000000
+ 60612 multiletter control sequences out of 15000+600000
+ 638029 words of font info for 79 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 107i,21n,118p,725b,2234s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </Users/yales/texlive/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0600.600pk> 
-</Users/yales/texlive/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0800.600pk></Us
-ers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></U
-sers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></
-Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
-/Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb>
-</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb>
-</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb>
-</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><
-/Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></
-Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></U
-sers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></Us
-ers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></U
-sers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></U
-sers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></U
-sers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></U
-sers/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></
-Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb><
-/Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10
-.pfb>
-Output written on main.pdf (22 pages, 393360 bytes).
+ 107i,21n,118p,725b,2232s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.p
+fb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.
+pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10
+.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi1
+0.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+6.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+7.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+8.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
+0.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
+2.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
+7.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6
+.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.
+pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.p
+fb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.
+pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.
+pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.
+pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.
+pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10
+.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt1
+0.pfb></Users/yales/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols
+/msbm10.pfb>
+Output written on main.pdf (22 pages, 383274 bytes).
 PDF statistics:
- 607 PDF objects out of 1000 (max. 8388607)
- 532 compressed objects within 6 object streams
+ 593 PDF objects out of 1000 (max. 8388607)
+ 522 compressed objects within 6 object streams
  107 named destinations out of 1000 (max. 500000)
  173 words of extra memory for PDF output out of 10000 (max. 10000000)
 

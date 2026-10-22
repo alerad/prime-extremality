@@ -5,7 +5,7 @@ sets* (`../main.tex`). Lean **v4.35.0**, Mathlib `56a00585`, built against
 [LeanCert](https://github.com/alerad/leancert), its q-product
 library [leancert-qproduct](https://github.com/alerad/leancert-qproduct) (`QProduct.*`, formerly
 `LeanCert.QProduct.*`) and, for the prime number theorem, PrimeNumberTheoremAnd at
-upstream commit `127b50e5` (unmodified).
+upstream commit `127b50e3` (unmodified).
 
 - `FORMALIZATION_PLAN.md`: inventory and phase plan from the original development.
 - `RntPaper/*.lean`: one module per paper section. No `sorry`. Every main theorem
@@ -41,7 +41,7 @@ One-time setup for the PNT+ closure (same Mathlib commit as leancert, so no down
 ```sh
 cd ~/research/formalizations/PrimeNumberTheoremAnd
 git fetch https://github.com/AlexKontorovich/PrimeNumberTheoremAnd.git main
-git worktree add --detach ../round2/.deps/pnt435 127b50e5
+git worktree add --detach ../round2/.deps/pnt435 127b50e3
 cd ../round2/.deps/LeanArchitect
 git fetch origin 9f3bb53916b9d6fa05b7777389e1844f82b1c9a6
 git worktree add --detach ../arch435 9f3bb53916b9d6fa05b7777389e1844f82b1c9a6

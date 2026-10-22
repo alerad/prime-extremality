@@ -1,7 +1,7 @@
 # Prime extremality for product integrals over primitive sets
 
 [![Lean build](https://github.com/alerad/prime-extremality/actions/workflows/lean.yml/badge.svg)](https://github.com/alerad/prime-extremality/actions/workflows/lean.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23537236.svg)](https://doi.org/10.5281/zenodo.23537236)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23537235.svg)](https://doi.org/10.5281/zenodo.23537235)
 
 Paper ([`main.tex`](main.tex), [`main.pdf`](main.pdf)) and its Lean 4 formalization
 ([`lean/`](lean)) by Alejandro Radisic

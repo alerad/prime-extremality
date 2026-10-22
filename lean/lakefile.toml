@@ -24,7 +24,7 @@ git = "https://github.com/alerad/leancert-qproduct.git"
 rev = "4ce87955ba2adb22a99d5dbb2ecdd270c73da4b3"
 
 # The prime number theorem: `chebyshev_asymptotic` (θ ~ id) and `MediumPNT` (error
-# term), used unmodified at upstream commit 127b50e5 (Lean v4.35.0, Mathlib 56a00585).
+# term), used unmodified at upstream commit 127b50e3 (Lean v4.35.0, Mathlib 56a00585).
 [[require]]
 name = "PrimeNumberTheoremAnd"
 git = "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd.git"
