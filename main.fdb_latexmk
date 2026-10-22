@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1792673069.17163 "main.tex" "main.pdf" "main" 1792673069.89441 0
+["pdflatex"] 1792674233.1032 "main.tex" "main.pdf" "main" 1792674233.88129 0
   "/Users/yales/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/Users/yales/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "/Users/yales/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
@@ -215,9 +215,9 @@
   "/Users/yales/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1789638988 2986961 23690bb623ae60a466051003dd6be58e ""
   "/Users/yales/texlive/2026/texmf.cnf" 1789638952.76465 576 09f6b22cb4221b97bdbc46f50ce5aa29 ""
   "figures/crossing.dat" 1792571836.33219 12747 707bfcff8a0efce735fb7e0b4ffe53c6 ""
-  "main.aux" 1792673069.82171 8367 43556c451802c177de3e1fc352d79f10 "pdflatex"
-  "main.out" 1792673069.82226 3897 8e00b66ec7ffdd9fc7377eb042842545 "pdflatex"
-  "main.tex" 1792673068.30324 69981 9492481ae8e3f3d5a728661fdf5b4eda ""
+  "main.aux" 1792674233.80376 8367 43556c451802c177de3e1fc352d79f10 "pdflatex"
+  "main.out" 1792674233.80445 3897 8e00b66ec7ffdd9fc7377eb042842545 "pdflatex"
+  "main.tex" 1792674232.98763 70664 90acf17270eb82c57c84e9e4726712e4 ""
   (generated)
   "main.aux"
   "main.log"

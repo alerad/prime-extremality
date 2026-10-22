@@ -392,13 +392,17 @@ never arise below because $A$ is a set.
   legend style={draw=none, font=\small, at={(0.5,1.03)}, anchor=south,
     legend columns=2, /tikz/every even column/.append style={column sep=1.5em}},
   axis lines=left, tick label style={font=\small},
-  label style={font=\small},
+  label style={font=\small}, clip=false,
 ]
 \addplot[black!50, thin, forget plot] coordinates {(0,0) (1,0)};
 \addplot[blue, thick] table[x=x, y=E] {figures/crossing.dat};
 \addlegendentry{$H(x)-(1-x)$}
 \addplot[red, thick, dashed] table[x=x, y=G] {figures/crossing.dat};
 \addlegendentry{$\int_0^x\bigl(H-(1-u)\bigr)\,du$}
+\addplot[black!45, densely dotted, forget plot] coordinates {(0.567,-0.21) (0.567,0.21)};
+\node[font=\small, anchor=north west] at (axis cs:0.567,0.21) {$x^*$};
+\addplot[red, only marks, mark=*, mark size=1.6pt, forget plot] coordinates {(1,0.0161)};
+\node[font=\small, red, anchor=south east, yshift=4pt] at (axis cs:1,0.0161) {$0.0161$};
 \end{axis}
 \end{tikzpicture}
 \caption{The extremal case $T=\{2,3,\dots\}$ of
@@ -1278,7 +1282,7 @@ formula hold for almost all $N$?
 \section{Formal verification}\label{sec:formal}
 
 The accompanying Lean~4/Mathlib development~\cite{Lean4,Mathlib}
-(\url{https://github.com/alerad/prime-extremality}, release \texttt{v1.0.2}~\cite{Artifact}) is built with Lean
+(\url{https://github.com/alerad/prime-extremality}, release \texttt{v1.0.4}~\cite{Artifact}) is built with Lean
 \texttt{v4.35.0}, Mathlib commit
 \texttt{56a00585\allowbreak 5ea17e0b\allowbreak 0958f73e\allowbreak c801ae14\allowbreak 0b0a1679},
 the \href{https://github.com/alerad/leancert}{LeanCert library}
@@ -1452,10 +1456,14 @@ $\Phi(\tau)\le aXh_+(u_0)=AP_+$, so by \eqref{eq:saddle-alg}
 \end{proof}
 
 \section*{Declarations}
-\emph{Use of AI.} The author used Codex and Claude Code in
-developing parts of the Lean code, the verification scripts, and the
-manuscript. The author checked the mathematical arguments and assumes
-responsibility for the paper.
+\emph{AI declaration.} AI assistants (OpenAI Codex and Anthropic Claude
+Code) were used extensively throughout this work as research assistants:
+in exploring the problem and developing the mathematics, in writing the
+Lean~4 formalization and the verification scripts, and in drafting and
+editing the manuscript. The contributions are interwoven and are not
+separated here. All main results are formally verified in Lean~4 against
+Mathlib, the author checked the arguments and references in the paper,
+and the author takes full responsibility for its content.
 
 \emph{Competing interests.} The author declares no competing
 interests.
@@ -1546,7 +1554,7 @@ A.~Kontorovich and T.~Tao,
 A.~Radisic,
 \texttt{prime-extremality}, Lean~4 artifact,
 \url{https://github.com/alerad/prime-extremality}, release
-\texttt{v1.0.2}; archived at
+\texttt{v1.0.4}; archived at
 \url{https://doi.org/10.5281/zenodo.23537235}.
 
 \bibitem{ProductInvariants}
