@@ -1,0 +1,10 @@
+tasks: 4076
+done in 3s
+merged 3112 A_ok: 3112 B_ok: 3112 signs: {'zero': 1, 'pos': 37, 'single+-': 3074}
+   min R_126(1) over single-crossing cases: 0.0 {'S': (2, 3, 5, 7)}
+single 928 A_ok: 928 B_ok: 928 signs: {'single+-': 915, 'pos': 13}
+   min R_126(1) over single-crossing cases: 1.4276018901856009e-05 {'p': 11, 'T': (2, 3, 5)}
+small 35 A_ok: 35 B_ok: 35 signs: {'pos': 30, 'zero': 5}
+single: sign_v == sign_u for all: True  Q valid for all: True
+single caps used: {22: 438, 33: 2, 66: 2, 26: 179, 39: 4, 34: 118, 38: 59, 46: 42, 58: 28, 62: 14, 82: 9, 74: 11, 86: 9, 94: 5, 106: 5, 118: 3}
+A9: [{'kind': 'merged', 'S': (4, 5, 6, 7, 9), 'sign': 'single+-', 'A9': True, 'R(125.84)': 3.576308004428467e-11, 'R(125.85)': -7.515898085973218e-10}]

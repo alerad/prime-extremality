@@ -1,0 +1,59 @@
+N range 7 62 count 56
+total maximal primitive sets (excluding P_N): 2194792
+total violations (min_y R_k(y) < 0 at k = k9-1e-6): 0
+7 2 fail@140: 0 lowest: None
+8 4 fail@140: 0 lowest: None
+9 5 fail@140: 1 lowest: (125.8405, 125.8405, [4, 5, 6, 7, 9])
+10 9 fail@140: 1 lowest: (125.8405, 125.8405, [4, 5, 6, 7, 9])
+11 9 fail@140: 0 lowest: None
+12 11 fail@140: 0 lowest: None
+13 11 fail@140: 0 lowest: None
+14 21 fail@140: 0 lowest: None
+15 22 fail@140: 0 lowest: None
+16 34 fail@140: 0 lowest: None
+17 34 fail@140: 0 lowest: None
+18 46 fail@140: 0 lowest: None
+19 46 fail@140: 0 lowest: None
+20 62 fail@140: 0 lowest: None
+21 64 fail@140: 0 lowest: None
+22 124 fail@140: 0 lowest: None
+23 124 fail@140: 0 lowest: None
+24 148 fail@140: 0 lowest: None
+25 149 fail@140: 1 lowest: (139.9229, 139.9229, [4, 6, 7, 9, 10, 11, 13, 15, 17, 19, 23, 25])
+26 293 fail@140: 1 lowest: (139.9229, 139.9229, [4, 6, 7, 9, 10, 11, 13, 15, 17, 19, 23, 25])
+27 361 fail@140: 1 lowest: (139.9229, 139.9229, [4, 6, 7, 9, 10, 11, 13, 15, 17, 19, 23, 25])
+28 505 fail@140: 1 lowest: (139.9229, 139.9229, [4, 6, 7, 9, 10, 11, 13, 15, 17, 19, 23, 25])
+29 505 fail@140: 0 lowest: None
+30 593 fail@140: 0 lowest: None
+31 593 fail@140: 0 lowest: None
+32 893 fail@140: 0 lowest: None
+33 901 fail@140: 0 lowest: None
+34 1785 fail@140: 0 lowest: None
+35 1786 fail@140: 0 lowest: None
+36 2074 fail@140: 0 lowest: None
+37 2074 fail@140: 0 lowest: None
+38 4130 fail@140: 0 lowest: None
+39 4146 fail@140: 0 lowest: None
+40 5394 fail@140: 0 lowest: None
+41 5394 fail@140: 0 lowest: None
+42 6642 fail@140: 0 lowest: None
+43 6642 fail@140: 0 lowest: None
+44 9738 fail@140: 0 lowest: None
+45 11170 fail@140: 0 lowest: None
+46 22298 fail@140: 0 lowest: None
+47 22298 fail@140: 0 lowest: None
+48 26138 fail@140: 0 lowest: None
+49 26139 fail@140: 0 lowest: None
+50 40731 fail@140: 0 lowest: None
+51 40771 fail@140: 0 lowest: None
+52 60331 fail@140: 0 lowest: None
+53 60331 fail@140: 0 lowest: None
+54 80779 fail@140: 0 lowest: None
+55 80781 fail@140: 0 lowest: None
+56 111885 fail@140: 0 lowest: None
+57 111965 fail@140: 0 lowest: None
+58 223765 fail@140: 0 lowest: None
+59 223765 fail@140: 0 lowest: None
+60 249109 fail@140: 0 lowest: None
+61 249109 fail@140: 0 lowest: None
+62 498053 fail@140: 0 lowest: None

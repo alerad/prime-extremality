@@ -1,0 +1,3 @@
+mode=code tasks=1031 cells=65536
+done in 698s; {('merged', 'vacuous', True): 12, ('merged', 'IA', True): 1019}
+  merged: min rigorous lower bound of G(1) = 7.399e-08 at ('merged', [2, 3, 5], [4, 6, 9, 10, 15]); min over y of lower bound = 0.000e+00

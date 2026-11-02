@@ -1,0 +1,9 @@
+960 nodes, 32 panels; max omitted-prime tail in Phi: 2.84e-43
+integrand at t_lo, t_hi (s=2.14): 3.36e-36 2.01e-36
+J_2.125(1) = 0.00032634481257566943596
+J_3.0(1) = -0.0089671765158473321361
+paper: J_{17/8}(1) > 1/20000 = 5e-5 (exact certificate), J_3(1) < 0
+alpha_0 (40-digit arithmetic, GL deg 30) = 2.143121918251916672022069
+dJ/ds at alpha_0 ~ -0.0177874
+alpha_0 (double precision, log-t panels, bisection) = 2.143121918251916
+claimed alpha_0 = 2.14312191825192...

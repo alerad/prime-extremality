@@ -11,6 +11,7 @@ upstream commit `127b50e3` (unmodified).
 - `RntPaper/*.lean`: one module per paper section. No `sorry`. Every main theorem
   depends only on `propext`, `Classical.choice`, `Quot.sound`, except the digits of Λ
   and the `k = 126` comparison, which use `native_decide`.
+- Follow-up results (`../supplement/discovery/notes.tex`, §3): see the section at the end.
 
 ## Checking
 
@@ -124,3 +125,21 @@ Numbering follows the current `../main.tex`.
 | Thm 5.10 | `tail_second_order_pnt` | `TailSecond.lean` |
 | Lem A.1 | `saddle_second_order` | `Tail/Saddle2.lean` |
 
+
+## Follow-up results (`../supplement/discovery/notes.tex`)
+
+| Notes | Lean | Axioms |
+|---|---|---|
+| Thm 3.2, Cor 3.3: relative extremality, exact cone; powers iff `k ≤ 2α₀` | `Relative` (`relative_cone_iff`, `relative_cone_le`, `relative_cone_lt`, `alpha0_mem`, `relative_powers_iff`, `twoPrimes_moment_lt`; with `RelativeL1`, `RelativeCone`) | standard |
+| Thm 3.5: moments for `0 < k ≤ 51/8` (`≤ 3b` if `J_b(1) > 0`) | `MomentsOdd` (`moment_primes_lt_odd`, `moment_primesLE_lt_odd`, `moment_primes_lt_odd_of_Jw`) | standard |
+| Thm 3.7: moments for `0 < k < 3 + 6√3` | `Moments1339` (`moment_primesLE_lt_1339`, `moment_primes_lt_1339`; certificates in `Moments1339Cert` by `decide +kernel`) | standard |
+| Thm 3.8: the primes minimize `𝔼 min(Z_A^k, c^k)` for every `N` iff `k ≤ k₉ = 125.84…` | `K9Theorem` (`moment_primesLE_k9`, `moment_primes_k9`, `moment_A9_lt`, `k9_threshold`, `k9_unique_root`, `k9_mem`) | standard + `native_decide` |
+
+Theorem 3.8 is proved by the weighted ordered descent (`K9Descent`, `K9Main`) from 5,350 case checks.
+The certificate library (`CertPoly`, `CertAnalytic`, `CertCheck`, `CertFast`, `CertV1`) gives each
+executable check a soundness theorem (single sign change + variation diminishing; envelope bounds);
+`K9Enum` proves that the enumeration covers every case; `K9Data` holds envelope parameters, which are
+re-verified, not trusted; `K9Tight` defines `k₉` as the root of `𝔼 Z_{A₉}^k = 𝔼 Z_{𝒫₉}^k` in
+`(125.84, 125.85)`. The checks run in the 114 files `K9Cert/*` by `native_decide` (about 10 minutes on
+12 cores); the audit lists their generated axioms. Kernel evaluation (`decide +kernel`) was tested and
+is about 100 times too slow for the largest cases.

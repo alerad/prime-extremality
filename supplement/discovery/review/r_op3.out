@@ -1,0 +1,38 @@
+=== Method 1 (direct integral of P_N - Q) ===
+N=1009: q=1013, -log(I_N-Lambda) = 47.9527120525 (refined grid: 47.9527120525, diff +0.0e+00); log(integrand at ends / max) = -199.2
+N=10007: q=10009, -log(I_N-Lambda) = 130.7352413599 (refined grid: 130.7352413599, diff +0.0e+00); log(integrand at ends / max) = -712.2
+N=19609: q=19661, -log(I_N-Lambda) = 175.9906482812 (refined grid: 175.9906482812, diff +0.0e+00); log(integrand at ends / max) = -998.5
+N=31397: q=31469, -log(I_N-Lambda) = 216.8246491973 (refined grid: 216.8246491973, diff +0.0e+00); log(integrand at ends / max) = -1255.6
+N=50021: q=50023, -log(I_N-Lambda) = 266.4965953964 (refined grid: 266.4965953964, diff +5.7e-14); log(integrand at ends / max) = -1568.9
+N=89689: q=89753, -log(I_N-Lambda) = 346.0835107876 (refined grid: 346.0835107876, diff +0.0e+00); log(integrand at ends / max) = -2074.7
+N=99989: q=99991, -log(I_N-Lambda) = 363.4162824937 (refined grid: 363.4162824937, diff +0.0e+00); log(integrand at ends / max) = -2184.5
+=== Method 2 (sum of delta(p), GL panels in log t) ===
+ANVIL_PROGRESS {"done":1,"total":14514,"phase":"delta_p","unit":"prime"}
+ANVIL_PROGRESS {"done":14514,"total":14514,"phase":"delta_p","unit":"prime"}
+14514 primes p in [1013,160000]; worst log(integrand at ends / max) = -364.3
+mpmath check: log delta(1013) = -50.0929790004624  vs method 2: -50.092979000462  (diff +0.00e+00)
+mpmath check: log delta(10009) = -133.670284372254  vs method 2: -133.670284369108  (diff -3.15e-09)
+=== Table 1 (notes) recomputed ===
+     N  q-N   -log(I-L) m1             m2   claimed |  res heur      cl | -log(tq lq S)      cl | res Thm2.4      cl
+  1009    4      47.952712      47.952712    47.953 |   -0.2520  -0.252 |       -0.1869  -0.187 |   +0.02273 +0.0227
+ 10007    2     130.735241     130.735241   130.735 |   -0.0562  -0.056 |       +0.0063  +0.006 |   +0.00717 +0.0072
+ 19609   52     175.990648     175.990648   175.991 |   -0.1159  -0.116 |       -0.0550  -0.055 |   +0.00477 +0.0048
+ 31397   72     216.824649     216.824649   216.825 |   -0.0827  -0.083 |       -0.0228  -0.023 |   +0.00338 +0.0034
+ 50021    2     266.496595     266.496595   266.497 |   -0.0946  -0.095 |       -0.0360  -0.036 |   +0.00267 +0.0027
+ 89689   64     346.083511     346.083511   346.084 |   -0.1530  -0.153 |       -0.0961  -0.096 |   +0.00203 +0.0020
+ 99989    2     363.416282     363.416282   363.416 |   -0.0102  -0.010 |       +0.0464  +0.046 |   +0.00202 +0.0020
+=== Prop. 2.3 numerics: log(delta(p) / (sqrt(2pi/Phi''(t_p)) e^{-M_p - t_p})) ===
+ANVIL_PROGRESS {"done":1,"total":1,"phase":"delta_p","unit":"prime"}
+   p=101: +0.02110   (notes: +0.0211; notes use p=1009 for '10^3')
+   p=1013: +0.00731   (notes: +0.0073; notes use p=1009 for '10^3')
+   p=10007: +0.00292   (notes: +0.0029; notes use p=1009 for '10^3')
+   p=100003: +0.00106   (notes: +0.0011; notes use p=1009 for '10^3')
+ANVIL_PROGRESS {"done":1,"total":1,"phase":"delta_p","unit":"prime"}
+   p=1009: +0.00733   (notes: +0.0073)
+=== Ranges over N = p_n in (20000, 10^5] (notes: Thm 2.4 residual in [0.0019,0.0048]; heur residual in [-0.25,0.16], sd 0.057; regression slope 1.0009, intercept -0.058, corr 0.9995) ===
+ANVIL_PROGRESS {"done":5,"total":8,"phase":"newton_all_q","unit":"iteration"}
+ANVIL_PROGRESS {"done":8,"total":8,"phase":"newton_all_q","unit":"iteration"}
+   7330 values of N; Thm 2.4 residual in [+0.00186, +0.00477]; heur residual in [-0.2522, +0.1560], sd 0.0570
+   regression of heur residual on -log(t_q log q Sigma_q): slope 1.0010, intercept -0.0583, corr 0.99978
+   sd of log(t_q log q Sigma_q) over q in [70000,1e5]: 0.0495 (notes 0.050); mean +0.0128 (notes +0.0128)
+python3 -u r_op3.py  15.48s user 0.07s system 99% cpu 15.621 total

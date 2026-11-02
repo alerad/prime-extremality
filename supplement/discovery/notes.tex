@@ -1,0 +1,821 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Prm}{\mathcal{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Min}{\operatorname{Min}}
+\newcommand{\sm}[1]{\langle #1\rangle}
+
+\title{Notes on open problems 2 and 3 of\\
+\emph{Prime extremality for product integrals over primitive sets}}
+\author{Working notes (draft), 31 October 2026}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+These notes continue the paper \cite{P}, whose notation and numbering
+they use. For open problem~3 we show that, for \emph{every} $N$, the truncation error
+$I_N-\Lambda$ equals, up to a factor $1+o(1)$, an explicit smooth factor times the
+Laplace transform $\Sigma_q=\sum_{p\ge q}e^{-(p-q)t_q}$ of the primes after the least prime
+$q>N$, at scale $1/t_q\sim\sqrt{q\log q/(2\zeta(2))}$. Consequences: two-sided bounds for every
+$N$ that sharpen Proposition~5.5; the conjectured formula of open problem~3 holds for all
+$N\le X$ outside a set of size $O_A(X(\log X)^{-A})$; and if it held for all $N$, then
+$p_{n+1}-p_n\ll\sqrt{p_n\log p_n}$, a bound not known even under the Riemann hypothesis.
+Numerically, the local factor explains the residual of open problem~3 almost
+exactly (for $20000<N\le10^5$: correlation $0.9998$, fitted slope $1.001$).
+For open problem~2 we determine the \emph{relative} cone exactly:
+$\Min(U)$ minimizes $\E\phi(Z_A)$ over primitive $A\subseteq U$ for every $U$ if and only if
+$\E\phi(Z_\Prm^{1/D})\ge\E\phi(V^{1/D})$ for every integer $D\ge2$, with $V$ uniform on
+$[0,1]$; for $\phi(x)=x^k$ this means $k\le2\alpha_0$, so the barrier of Remark~4.4 is
+intrinsic to the relative problem. For the absolute problem, compressing at odd primes
+before the prime~$2$ removes that barrier: the primes minimize
+$\E\min(Z_A^k,c^k)$ for all $0<k\le 3b$ whenever $J_b(1)>0$. This gives $k\le 51/8$, formally
+verified in Lean, and with exact envelope certificates every $0<k<3+6\sqrt3=13.39\ldots$.
+Keeping the weight contributed by the large primes, and comparing the $\{2,3,5,7\}$-smooth part
+with $\{2,3,5,7\}$ in one step, we determine the exact threshold: the primes minimize
+$\E\min(Z_A^k,c^k)$ for every $N$ if and only if $k\le k_9=125.8404540694\ldots$, the exponent at
+which $A_9=\{4,5,6,7,9\}$ ties with $\Prm_9$. The remaining finitely many cases are verified by
+5{,}350 certificates in exact arithmetic. Theorems~3.2, 3.5, 3.7 and~3.8 are formalized in Lean
+(\S\ref{sec:lean}).
+\end{abstract}
+
+\section{Summary}
+
+Recall from \cite{P}: $P_A(x)=\prod_{n\in A}(1-x^n)$, $I_N=\int_0^1P_{\Prm_N}$,
+$\Lambda=\lim I_N$, $\Phi(t)=-\sum_p\log(1-e^{-pt})$, $a=\zeta(2)$, $L(t)=\log(1/t)$,
+$M_N=\inf_{t>0}(Nt+\Phi(t))$, attained at the unique $t_N$ with $-\Phi'(t_N)=N$, and
+$q_N$ the least prime exceeding $N$. Open problem~3 asks for the term after $M_{q_N}$ in
+$-\log(I_N-\Lambda)$; the paper's heuristic is
+\begin{equation}\label{eq:heur}
+-\log(I_N-\Lambda)=M_q+\tfrac14\log q+\tfrac34\log\log q-\tfrac12\log\pi
++\tfrac14\log(2\zeta(2))+o(1),\qquad q=q_N,
+\end{equation}
+and the paper asks whether \eqref{eq:heur} holds for almost all $N$.
+
+\begin{itemize}
+\item \textbf{Theorem~\ref{thm:local}} (local law, every $N$):
+$I_N-\Lambda=(1+O(q^{-1/4}\log^4q))\sqrt{2\pi/\Phi''(t_q)}\,e^{-M_q-t_q}\,\Sigma_q$ with
+$\Sigma_q=\sum_{p\ge q}e^{-(p-q)t_q}$.
+\item \textbf{Corollary~\ref{cor:every}}: for every $N\ge3$,
+$M_q+\frac14\log q+\frac34\log\log q-C\le-\log(I_N-\Lambda)\le M_q+\frac34\log q+\frac14\log\log q+C$.
+\item \textbf{Theorem~\ref{thm:aa}}: \eqref{eq:heur} holds for all $N$ outside a set
+$\mathcal E$ with $\#(\mathcal E\cap[1,X])\ll_AX(\log X)^{-A}$. This answers the question
+of open problem~3.
+\item \textbf{Corollary~\ref{cor:allN}}: if \eqref{eq:heur} holds for all large $N$, then
+$p_{n+1}-p_n\le(\log4/\sqrt{2\zeta(2)}+o(1))\sqrt{p_n\log p_n}$.
+\item \textbf{Theorem~\ref{thm:relative}}: the exact cone for the relative version of open
+problem~2; \textbf{Corollary~\ref{cor:2alpha}}: for powers, relative extremality holds iff
+$k\le2\alpha_0$.
+\item \textbf{Theorem~\ref{thm:odd}}: absolute moment minimality for $0<k\le3b$ whenever
+$J_b(1)>0$; with $b=17/8$ this is $k\le51/8$, formalized (\texttt{RntPaper/MomentsOdd.lean}).
+\textbf{Theorem~\ref{thm:1339}}: every $0<k<3+6\sqrt3$.
+\item \textbf{Theorem~\ref{thm:k9}}: the largest admissible power is exactly
+$k_9=125.84045406944565748\ldots$ (computer-assisted, exact arithmetic).
+\end{itemize}
+
+\section{The truncation error}\label{sec:op3}
+
+Throughout, $p$ and $q$ denote primes. For an integer $n\ge2$ put
+$P_{<n}=\prod_{p<n}(1-x^p)$ and
+\[
+\delta(n)=\int_0^1x^nP_{<n}(x)\,dx .
+\]
+For a prime $p$, $I_{p-1}-I_p=\delta(p)$, so $I_N-\Lambda=\sum_{p>N}\delta(p)=\sum_{p\ge q_N}\delta(p)$.
+
+\subsection{The saddle}
+
+\begin{lemma}[derivatives of $\Phi$]\label{lem:deriv}
+For $j=0,1,2,3$, $(-1)^jt^{j+1}L(t)\,\Phi^{(j)}(t)\to j!\,a$ as $t\downarrow0$.
+\end{lemma}
+
+\begin{proof}
+$j=0$ is [P, Lemma~5.2]. Let $j\ge1$ and $S_j(u)=\sum_pp^je^{-pu}$. Partial summation and
+$\theta(x)=x+o(x)$ give $u^{j+1}\sum_pp^j\log p\,e^{-pu}\to\int_0^\infty y^je^{-y}dy=j!$, and the
+splitting argument of [P, Lemma~5.1] at $u^{-(1\pm\delta)}$ turns this into
+$u^{j+1}L(u)S_j(u)\to j!$. Differentiating $\Phi(t)=\sum_{m\ge1}S(mt)/m$ termwise (all series
+of derivatives converge locally uniformly on $(0,\infty)$),
+\[
+(-1)^jt^{j+1}L(t)\Phi^{(j)}(t)=\sum_{m\ge1}\frac1{m^2}\,(mt)^{j+1}L(mt)S_j(mt)\,
+\frac{L(t)}{L(mt)} .
+\]
+Each term tends to $j!/m^2$. Domination is as in the proof of [P, Lemma~5.2], using
+$S_j(u)\le\sum_nn^je^{-nu}\ll_ju^{-j-1}e^{-u/2}$ and $u^{j+1}L(u)S_j(u)\le2\,j!$ for small $u$.
+\end{proof}
+
+\begin{lemma}[the saddle]\label{lem:saddle-n}
+As $n\to\infty$ through real numbers,
+$t_n\sim\sqrt{2a/(n\log n)}$, $L(t_n)\sim\frac12\log n$, $\Phi''(t_n)\sim2n/t_n$, and
+$dt_n/dn=-1/\Phi''(t_n)\sim-t_n/(2n)$. Moreover $|\Phi'''(t)|\ll n/t_n^2$ for
+$t_n/2\le t\le2t_n$, and $M_n\asymp\sqrt{n/\log n}$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:deriv}, $n=-\Phi'(t_n)\sim a/(t_n^2L(t_n))$; taking logarithms gives
+$L(t_n)\sim\frac12\log n$ and then $t_n$. The other statements follow from
+Lemma~\ref{lem:deriv}, since $L(t)\sim L(t_n)$ uniformly on $[t_n/2,2t_n]$; differentiate
+$-\Phi'(t_n)=n$ for $dt_n/dn$. For $M_n$ see the proof of [P, Theorem~1.5].
+\end{proof}
+
+\begin{proposition}[Laplace]\label{prop:laplace}
+As $n\to\infty$,
+\[
+\delta(n)=\sqrt{\frac{2\pi}{\Phi''(t_n)}}\;e^{-M_n-t_n}\,\bigl(1+O(n^{-1/4}\log^4n)\bigr).
+\]
+\end{proposition}
+
+\begin{proof}
+With $x=e^{-t}$, $\delta(n)=\int_0^\infty e^{-(n+1)t}P_{<n}(e^{-t})\,dt$ and
+$P_{<n}(e^{-t})=e^{-\Phi(t)}R_n(t)$, where $R_n(t)=\prod_{p\ge n}(1-e^{-pt})^{-1}\ge1$ satisfies
+$\log R_n(t)\le e^{-nt}/((1-e^{-nt})(1-e^{-t}))$. Write $F(t)=nt+\Phi(t)$, which is strictly
+convex with minimum $M_n$ at $t_n$. Put $\sigma=\Phi''(t_n)^{-1/2}$, $K=\log n$ and
+$\rho=K\sigma$. By Lemma~\ref{lem:saddle-n}, $\sigma/t_n\asymp(nt_n)^{-1/2}$, which is a negative
+power of $n$, so $\rho\le t_n/2$ for large $n$.
+
+\emph{The window $|t-t_n|\le\rho$.} By Taylor's theorem,
+$F(t)=M_n+\frac12\Phi''(t_n)(t-t_n)^2+r(t)$ with
+$|r(t)|\ll(n/t_n^2)\rho^3\asymp K^3(nt_n)^{-1/2}\to0$. Here $t\ge t_n/2$, so $e^{-t}=e^{-t_n}(1+O(\rho))$ and
+$\log R_n(t)\ll e^{-nt_n/2}/t_n$, which is smaller than any power of $n$. The window
+therefore contributes $e^{-M_n-t_n}\sqrt{2\pi}\,\sigma\,(1+O(K^3(nt_n)^{-1/2}))$, the Gaussian
+mass outside $K$ standard deviations being $O(e^{-K^2/2})$; note $K^3(nt_n)^{-1/2}\ll
+n^{-1/4}\log^4n$.
+
+\emph{The range $t\ge s_0:=2\log n/n$ outside the window.} There $e^{-nt}\le n^{-2}$ and
+$1-e^{-t}\ge s_0/2$, so $R_n(t)\le e$. Convexity gives
+$F(t)-M_n\ge\frac{|t-t_n|}{\rho}\min_\pm\bigl(F(t_n\pm\rho)-M_n\bigr)\ge\frac{K^2}{3}\frac{|t-t_n|}{\rho}$
+for $|t-t_n|\ge\rho$, so this range contributes at most
+$2e\,e^{-M_n}\int_\rho^\infty e^{-K^2h/(3\rho)}dh=O\bigl(\sigma K^{-1}e^{-K^2/3}e^{-M_n}\bigr)$.
+
+\emph{The range $0<t<s_0$.} Here $P_{<n}(e^{-t})\le P_{<n}(e^{-s_0})\le e^{1-\Phi(s_0)}$. By
+[P, Lemma~5.2], $\Phi(s_0)\asymp n/\log^2n$, which exceeds $2M_n\asymp\sqrt{n/\log n}$ for large $n$.
+The contribution is at most $s_0e^{1-2M_n}=o(\sigma e^{-M_n})$, because $\sigma$ is a power of $n$.
+\end{proof}
+
+The factor $e^{-t_n}=1+O(t_n)$ could be absorbed in the error term; we keep it because it is
+the Jacobian of $x=e^{-t}$ and it is most of the numerical discrepancy. Numerically,
+$\log\bigl(\delta(p)\big/\sqrt{2\pi/\Phi''(t_p)}\,e^{-M_p-t_p}\bigr)$ is
+$0.0211$, $0.0073$, $0.0029$, $0.0011$ at $p\approx10^2,10^3,10^4,10^5$.
+
+\subsection{The local law}
+
+\begin{theorem}[local law]\label{thm:local}
+For every $N\ge2$, with $q=q_N$,
+\[
+I_N-\Lambda=\bigl(1+O(q^{-1/4}\log^4q)\bigr)\sqrt{\frac{2\pi}{\Phi''(t_q)}}\;e^{-M_q-t_q}\;\Sigma_q,
+\qquad\Sigma_q:=\sum_{p\ge q}e^{-(p-q)t_q} .
+\]
+\end{theorem}
+
+\begin{proof}
+Put $\Lambda_u=\sqrt{2\pi/\Phi''(t_u)}\,e^{-M_u-t_u}$ for real $u\ge2$. By
+Proposition~\ref{prop:laplace}, $\delta(p)=\Lambda_p(1+O(q^{-1/4}\log^4q))$ for all $p\ge q$.
+On the range in (a), $e^{t_q-t_p}=1+O(Ht_q/q)$, and below these factors are bounded by $1$.
+We write $o(1)$ for errors that are $O(q^{-1/4}\log^4q)$.
+Let $H=3\log q/t_q$.
+
+(a) Let $q\le p\le q+H$. Since $M_u'=t_u$ and
+$|dt_u/du|\le(1+o(1))t_q/q$ on $[q,q+H]$ (Lemma~\ref{lem:saddle-n}),
+\[
+\bigl|M_p-M_q-(p-q)t_q\bigr|\le(1+o(1))H^2t_q/q=O\Bigl(\frac{\log^2q}{qt_q}\Bigr)=o(1),
+\]
+because $qt_q\asymp\sqrt{q/\log q}$. Also $\Phi''(t_p)/\Phi''(t_q)\to1$ uniformly, since
+$\Phi''(t_u)\sim2u/t_u$ and $H=o(q)$. Hence $\Lambda_p=\Lambda_qe^{-(p-q)t_q}(1+o(1))$ uniformly in
+this range.
+
+(b) Let $q+H<p\le2q$. Then $M_p-M_q\ge(p-q)t_{2q}\ge(p-q)t_q/2$, since $t_{2q}/t_q\to2^{-1/2}$, and
+$\Phi''(t_p)\ge(1+o(1))\Phi''(t_q)$, so
+$\sum_{q+H<p\le2q}\Lambda_p\le2\Lambda_q\sum_{m>H}e^{-mt_q/2}\le\Lambda_q\cdot8q^{-3/2}/t_q=o(\Lambda_q)$.
+For $p>2q$, $M_p-M_q\ge\frac p2t_p\gg\sqrt{p/\log p}$ while
+$\Lambda_q\gg e^{-M_q}q^{-1}$, so $\sum_{p>2q}\Lambda_p=o(\Lambda_q)$.
+
+(c) Similarly $\sum_{p>q+H}e^{-(p-q)t_q}\le e^{-Ht_q}/(1-e^{-t_q})=O(q^{-3}/t_q)=o(1)$.
+
+Combining (a)--(c),
+$\sum_{p\ge q}\delta(p)=\Lambda_q\bigl[(1+o(1))\sum_{q\le p\le q+H}e^{-(p-q)t_q}+o(1)\bigr]
+=\Lambda_q\Sigma_q(1+o(1))$, since $\Sigma_q\ge1$ (the term $p=q$). All errors in (a)--(c) are
+$O(q^{-1/4}\log^4q)$: the linearization costs $O(\log^2q/(qt_q))=O(q^{-1/2}\log^{5/2}q)$, and the
+tails are smaller than any power of $q$.
+\end{proof}
+
+\subsection{Every \texorpdfstring{$N$}{N}}
+
+\begin{corollary}\label{cor:every}
+For every $N\ge3$, with $q=q_N$,
+\[
+-\log(I_N-\Lambda)=M_q+t_q+\tfrac12\log\frac{\Phi''(t_q)}{2\pi}-\log\Sigma_q+o(1),
+\qquad 1\le\Sigma_q\le\frac{4+o(1)}{t_q\log q} ,
+\]
+and consequently, for an absolute constant $C$,
+\[
+M_q+\tfrac14\log q+\tfrac34\log\log q-C\ \le\ -\log(I_N-\Lambda)\ \le\
+M_q+\tfrac34\log q+\tfrac14\log\log q+C .
+\]
+\end{corollary}
+
+\begin{proof}
+The identity is Theorem~\ref{thm:local}. For the upper bound on $\Sigma_q$ write
+$\Sigma_q=t_q\int_0^\infty e^{-ht_q}\,\pi_q(h)\,dh$, where $\pi_q(h)=\#\{p\in[q,q+h]\}$, and use the
+Brun--Titchmarsh inequality $\pi(x+y)-\pi(x)\le2y/\log y$ ($y>1$) of Montgomery and
+Vaughan~\cite{MV}: $\Sigma_q\le(2+o(1))/(t_q\log(1/t_q))$ and $\log(1/t_q)\sim\frac12\log q$. The
+last display follows from $\Phi''(t_q)\sim2q/t_q$ and $t_q\sim\sqrt{2a/(q\log q)}$.
+\end{proof}
+
+Asymptotically this sharpens [P, Proposition~5.5], whose window is
+$[M_q-2\log q-3,\,M_q+\log(q+1)+4]$; that proposition, however, is explicit for every $N$ and does
+not use the prime number theorem, whereas $C$ here is not explicit. The lower bound is attained,
+up to $O(1)$, for almost all $N$ (Theorem~\ref{thm:aa}). The upper bound would require
+$\Sigma_q=O(1)$, that is a prime gap after $q$ of size $\gg\log q/t_q\asymp\sqrt q(\log q)^{3/2}$, the
+scale of [P, Corollary~5.6(iii)]; whether such gaps occur is open.
+
+\subsection{Almost every \texorpdfstring{$N$}{N}}
+
+The input is the prime number theorem in almost all short intervals, a classical
+consequence of Huxley's zero-density estimate~\cite{Hux}. We use it in the following form;
+see~\cite[Theorem~7]{Kum} for a proof, and~\cite{Mon} for the exponent $1/5$, which also
+suffices here.
+
+\begin{lemma}[Huxley]\label{lem:huxley}
+Fix $\varepsilon,A>0$. For $X\ge X_0(\varepsilon,A)$ and $X^{-5/6+\varepsilon}\le\delta\le1$, the
+set of $x\in[X,2X]$ with
+$|\psi(x)-\psi(x-\delta x)-\delta x|\ge\delta x/\log x$ has measure $O_A(X(\log X)^{-A})$.
+\end{lemma}
+
+\begin{theorem}\label{thm:aa}
+For every $A>0$ there is a set $\mathcal E_A\subseteq\mathbb N$ with
+$\#(\mathcal E_A\cap[1,X])\ll_AX(\log X)^{-A}$ such that, as $N\to\infty$ with
+$N\notin\mathcal E_A$,
+\[
+t_q\log q\;\Sigma_q=1+O\Bigl(\frac1{\log N}\Bigr),\qquad q=q_N .
+\]
+Consequently \eqref{eq:heur} holds for all $N\notin\mathcal E_A$, in particular for almost
+all $N$.
+\end{theorem}
+
+\begin{proof}
+Let $X$ be large and $N\in(X,2X]$. Put $H=\sqrt{X\log X}$, $J=\lceil(\log X)^4\rceil$ and
+$\delta_j=jH/(X(\log X)^2)$ for $1\le j\le J$. Each $\delta_j$ lies in the range of
+Lemma~\ref{lem:huxley}. For each $j$ let $E_j\subseteq[X,4X]$ be the exceptional set of the lemma
+for $\delta_j$, applied with $A+5$ in place of $A$ on $[X,2X]$ and on $[2X,4X]$; it has measure
+$O(X(\log X)^{-A-5})$. For real $x\in(X,2X+1]$ put $y_j(x)=x/(1-\delta_j)\in(X,4X)$, so that
+$(y_j(1-\delta_j),y_j]=(x,x+h_j(x)]$ with $h_j(x)=\delta_jx/(1-\delta_j)$. The set of $x$ for
+which $y_j(x)\in E_j$ for some $j$ has measure at most
+$\sum_j\operatorname{meas}(E_j)=O(X(\log X)^{-A-1})$. Call an integer $N$
+\emph{good} if some $x\in[N,N+1)$ avoids it; all but $O(X(\log X)^{-A})$ integers in
+$(X,2X]$ are good.
+
+Let $N$ be good. In windows of length $h\le H(\log X)^2$, prime powers $p^m$ with $m\ge2$
+contribute $O((\log X)^4)$ to $\psi$, and $\log p=\log N+O(h/N)$; moving from $x$ to $N$ changes
+each count by $O(1)$. So for all $j$
+\[
+\pi(N+h_j)-\pi(N)=\frac{h_j}{\log N}\Bigl(1+O\Bigl(\frac1{\log X}\Bigr)\Bigr)+O(1),
+\qquad h_j=h_j(N).
+\]
+The $h_j$ form a grid of mesh $\asymp H/(\log X)^2$ covering
+$[(N/X)H/(\log X)^2,(N/X)H(\log X)^2]\supseteq[H/\log X,H\log X]$, so by monotonicity $\pi(N+h)-\pi(N)=(h/\log N)(1+O(1/\log X))$ for all
+$h\in[H/\log X,H\log X]$. In particular $q-N\le h_1=O(H/(\log X)^2)$, and the same estimate
+holds for $\pi_q(h)=\#\{p\in[q,q+h]\}$.
+
+Since $t_qH$ lies between two positive constants (numerically in $[1.28,1.81]$), write
+$\Sigma_q=\int_0^\infty e^{-v}\pi_q(v/t_q)\,dv$ and split at $v=c/\log X$ and $v=C\log X$ with
+$c\ge t_qH$ and $C\le t_qH$ (for instance $c=2$, $C=1$), so that the middle range has
+$v/t_q\in[H/\log X,H\log X]$. The middle range gives $(1+O(1/\log X))/(t_q\log q)$. On
+$v<c/\log X$, Brun--Titchmarsh bounds the contribution by
+$O\bigl((t_q\log q)^{-1}(\log X)^{-2}\bigr)+O(1/\log X)$; on $v>C\log X$ it is
+$O\bigl((t_q\log q)^{-1}X^{-1}\bigr)$. Hence $t_q\log q\,\Sigma_q=1+O(1/\log X)$.
+
+Finally, Corollary~\ref{cor:every} together with $t_q\to0$, $\Phi''(t_q)\sim2q/t_q$ and
+$t_q\sim\sqrt{2a/(q\log q)}$ gives
+$t_q+\frac12\log\frac{\Phi''(t_q)}{2\pi}+\log(t_q\log q)
+=\frac14\log q+\frac34\log\log q-\frac12\log\pi+\frac14\log(2a)+o(1)$, which is
+\eqref{eq:heur}. Summing over dyadic ranges bounds $\#(\mathcal E_A\cap[1,X])$.
+\end{proof}
+
+\begin{remark}
+For $N\notin\mathcal E_A$ the $o(1)$ in \eqref{eq:heur} has three sources: the error
+$O(q^{-1/4}\log^4q)$ of Theorem~\ref{thm:local}, the $O(1/\log N)$ in $t_q\log q\,\Sigma_q$, and
+the replacement of $\Phi''(t_q)$ and $t_q$ by their first-order asymptotics. The last one
+dominates; second-order expansions of $\Phi'$ and $\Phi''$, analogous to Step~2 of [P,
+Theorem~5.10], should make it $O(\log\log q/\log q)$, but we have not written this out.
+Numerically it is the mean offset $\approx-0.058$ of the residual near $N=10^5$
+(Figure~\ref{fig:op3}). The intrinsic form
+$-\log(I_N-\Lambda)=M_q+t_q+\frac12\log\frac{\Phi''(t_q)}{2\pi}-\log\Sigma_q$ has error in
+$[0.0001,0.0012]$ for $20000<N<10^5$.
+\end{remark}
+
+\subsection{All \texorpdfstring{$N$}{N}}
+
+\begin{corollary}\label{cor:allN}
+If \eqref{eq:heur} holds for all large $N$, then
+$p_{n+1}-p_n\le\bigl(\log4/\sqrt{2\zeta(2)}+o(1)\bigr)\sqrt{p_n\log p_n}$.
+\end{corollary}
+
+\begin{proof}
+Let $q$ be a large prime, $g$ the gap after it, and $N=q-1$, so $q_N=q$. By
+Theorem~\ref{thm:local}, \eqref{eq:heur} at $N$ means $t_q\log q\,\Sigma_q\to1$. Brun--Titchmarsh
+applied to the primes beyond $q+g$ gives
+$\Sigma_q\le1+e^{-gt_q}\bigl(1+(2+o(1))/(t_q\log(1/t_q))\bigr)$, hence
+$t_q\log q\,\Sigma_q\le o(1)+(4+o(1))e^{-gt_q}$. So $e^{-gt_q}\ge\frac14-o(1)$, that is
+$g\le(\log4+o(1))/t_q$.
+\end{proof}
+
+The Riemann hypothesis gives only $p_{n+1}-p_n\ll\sqrt{p_n}\log p_n$~\cite{Cramer}. So
+\eqref{eq:heur} for every $N$ lies beyond the Riemann hypothesis. It would follow from the
+expected asymptotic $\pi(x+h)-\pi(x)\sim h/\log x$ uniformly for
+$\sqrt x/\log x\le h\le\sqrt x\log^2x$.
+
+\subsection{Numerics}
+
+Figure~\ref{fig:op3} and Table~\ref{tab:op3} use the exact telescoping terms $\delta(p)$ for
+$p<1.6\cdot10^5$ and $N=p_n\le10^5$, computed in floating point as in \texttt{next\_prime\_check.py}
+(\texttt{op3\_local.py}). The residual of \eqref{eq:heur} lies in $[-0.39,0.31]$ (in
+$[-0.25,0.16]$ for $N>20000$, standard deviation $0.057$). The residual of
+Theorem~\ref{thm:local} lies in $[0.0001,0.0012]$ for $N>20000$. Regressing the residual of
+\eqref{eq:heur} on $-\log(t_q\log q\,\Sigma_q)$ for $N>20000$ gives slope $1.001$, intercept
+$-0.058$, correlation $0.9998$ ($0.9995$ for $N>5000$). At the maximal gaps after $19609$,
+$31397$ and $89689$ the local factor is negative, that is $\Sigma_q$ is above average: slightly
+more primes than average follow $q$. The gap itself lies before $q$ and is absorbed by $M_q$.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.9\textwidth, height=0.42\textwidth,
+  xmode=log, xmin=100, xmax=100000,
+  ymin=-0.42, ymax=0.34,
+  xlabel={$N=p_n$}, ylabel={residual},
+  yticklabel style={/pgf/number format/fixed},
+  axis lines=left, tick label style={font=\small}, label style={font=\small},
+  legend style={draw=none, font=\small, at={(0.5,1.02)}, anchor=south, legend columns=2,
+    /tikz/every even column/.append style={column sep=1.2em}},
+]
+\addplot[black!20, line width=0.3pt, forget plot] coordinates {(100,0) (100000,0)};
+\addplot[black!38, line width=0.35pt] table[x=N, y=heur] {op3_residuals.dat};
+\addlegendentry{residual of \eqref{eq:heur}}
+\addplot[black, line width=0.9pt] table[x=N, y=thmA] {op3_residuals.dat};
+\addlegendentry{residual of Theorem~\ref{thm:local}}
+\end{axis}
+\end{tikzpicture}
+\caption{The residual of the heuristic \eqref{eq:heur} (gray) fluctuates because the
+density of primes just after $q_N$ fluctuates. Theorem~\ref{thm:local} accounts for that
+density through $\Sigma_q$, and its residual (black) is below $0.0012$ for $N>20000$. Every
+third value of $n$ is plotted; all values are in \texttt{op3\_residuals\_full.tsv}.}
+\label{fig:op3}
+\end{figure}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{rrrrrr}
+\toprule
+$N$ & $q-N$ & $-\log(I_N-\Lambda)$ & residual of \eqref{eq:heur} &
+$-\log(t_q\log q\,\Sigma_q)$ & residual of Thm.~\ref{thm:local}\\
+\midrule
+1009 & 4 & 47.953 & $-0.252$ & $-0.187$ & $+0.0024$\\
+10007 & 2 & 130.735 & $-0.056$ & $+0.006$ & $+0.0015$\\
+19609 & 52 & 175.991 & $-0.116$ & $-0.055$ & $+0.0008$\\
+31397 & 72 & 216.825 & $-0.083$ & $-0.023$ & $+0.0003$\\
+50021 & 2 & 266.497 & $-0.095$ & $-0.036$ & $+0.0003$\\
+89689 & 64 & 346.084 & $-0.153$ & $-0.096$ & $+0.0003$\\
+99989 & 2 & 363.416 & $-0.010$ & $+0.046$ & $+0.0004$\\
+\bottomrule
+\end{tabular}
+\caption{Sample values. The fourth column minus the fifth equals the sixth plus the
+deterministic part of the $o(1)$ in \eqref{eq:heur}, which decays slowly ($-0.067$ at $N=1009$,
+$-0.056$ at $N=99989$).}
+\label{tab:op3}
+\end{table}
+
+\begin{remark}[heuristic]
+The fluctuations of the local factor are a direct measurement of the irregularity of
+primes at scale $\sqrt{q\log q}$. Over $q\in[70000,10^5]$ the standard deviation of
+$\log(t_q\log q\,\Sigma_q)$ is $0.050$. The Cram\'er model predicts $\sqrt{(t_q/2)\log q}\approx0.10$. A
+pair-correlation computation with the Hardy--Littlewood singular series predicts $\approx0.061$,
+and the corresponding conditional mean ($+0.0129$) matches the observed mean ($+0.0128$)
+(\texttt{op3\_variance.py}).
+\end{remark}
+
+\section{The moment problem}\label{sec:op2}
+
+For a weight $w\in L^1(0,1)$, $w\ge0$, put $F_w(A)=\int_0^1w(u)P_A(u)\,du$. For an increasing
+absolutely continuous $\phi$ with $\phi'=w$, $\E\phi(Z_A)=\phi(0)+F_w(A)$ ([P, Remark~4.4]).
+Moments correspond to $w(u)=ku^{k-1}$ and truncations to $w\mathbf 1_{[0,c]}$. Recall
+$J_s(z)=\int_0^zx^{s-1}(Q(x)-(1-x))\,dx$ and $\alpha_0=\sup\{b:J_b(1)>0\}=2.14312191825192\ldots$.
+References of the form [P, \dots] are to the paper.
+
+\begin{lemma}[$L^1$ form of {[P, Lemma~3.3]}]\label{lem:stieltjesL1}
+Let $g\in L^1(0,c)$ with $G(y)=\int_0^yg\ge0$ for $0<y\le c$, and let $w$ be nonnegative,
+continuous and nonincreasing on $[0,c]$. Then $\int_0^cwg=w(c)G(c)+\int_{(0,c]}G\,d(-w)\ge0$,
+with strict inequality if $G>0$ on $(0,c]$ and either $w(c)>0$ or $d(-w)$ has positive mass
+on $(0,c)$.
+\end{lemma}
+
+\begin{proof}
+Write $w(u)=w(c)+(-w)((u,c])$ and apply Fubini, which is legitimate since $g\in L^1$ and
+$d(-w)$ is a finite measure: $\int_0^cwg=w(c)G(c)+\int_{(0,c]}\int_0^sg(u)\,du\,d(-w)(s)$.
+\end{proof}
+
+\subsection{Relative extremality: the exact cone}
+
+\begin{theorem}\label{thm:relative}
+Let $w\in L^1(0,1)$, $w\ge0$. The following are equivalent.
+\begin{enumerate}
+\item[(a)] For every finite $U\subseteq\{2,3,\dots\}$ and every primitive $A\subseteq U$,
+$F_w(A)\ge F_w(\Min(U))$.
+\item[(b)] For every integer $D\ge2$,
+$\int_0^1w(u)\bigl[Q(u^D)-(1-u^D)\bigr]du\ge0$; equivalently
+$\E\phi(Z_\Prm^{1/D})\ge\E\phi(V^{1/D})$ with $V$ uniform on $[0,1]$.
+\end{enumerate}
+Under (b), (a) also holds for every truncation $w\mathbf 1_{[0,c]}$ and for infinite $U$
+and $A$. If (b) is strict for every $D$ and $w>0$ almost everywhere, $\Min(U)$ is the unique
+minimizer.
+\end{theorem}
+
+Here $Z_\Prm^{1/D}$ has the law of $Z_{D\Prm}$ and $V^{1/D}$ that of $Z_{\{D\}}$. So (b) says that
+the single compression $D\Prm\to\{D\}$ does not increase $\E\phi$, and the theorem says that
+these compressions are the only obstructions.
+
+\begin{proof}
+(a)$\Rightarrow$(b): take $U=\{D\}\cup D\Prm_M$, so that $\Min(U)=\{D\}$, and $A=D\Prm_M$, which is
+primitive. Then (a) reads $\int_0^1w(u)P_{\Prm_M}(u^D)\,du\ge\int_0^1w(u)(1-u^D)\,du$; let
+$M\to\infty$ by dominated convergence.
+
+(b)$\Rightarrow$(a): for $d\ge1$ put $w_d(v)=d^{-1}w(v^{1/d})v^{1/d-1}$. Then
+$\int_0^yw(u)f(u^d)\,du=\int_0^{y^d}w_d(v)f(v)\,dv$, $(w_d)_e=w_{de}$ and $w_d\in L^1$. Since
+$g=Q-(1-x)$ changes sign once, from $+$ to $-$ ([P, Remark~4.4]), the running integrals
+$\int_0^zw_Eg$ are smallest at $z=0$ or $z=1$. Condition (b) at $D=E$ therefore gives
+\begin{equation}\label{eq:Jw}
+\int_0^zw_E(v)\bigl[Q(v)-(1-v)\bigr]dv\ \ge\ 0\qquad(E\ge2,\ 0<z\le1).
+\end{equation}
+We prove by induction on $N$: \emph{for every $D\ge1$, $z\in(0,1]$, $U\subseteq[2,N]$ and primitive
+$A\subseteq U$, $\int_0^zw_DP_A\ge\int_0^zw_DP_{\Min(U)}$.} For $N\le3$, $A\subseteq U=\Min(U)$.
+In general, if $A\subseteq\Min(U)$, add the missing elements one at a time; each addition
+lowers the integral. Otherwise pick $a\in A\setminus\Min(U)$ and a proper divisor $d\in U$ of
+$a$. As in the proof of [P, Theorem~4.1], $C_d(A)\subseteq U$ is primitive, and with
+$B=\{b\in A:d\nmid b\}$ and $T=\{b/d:d\mid b\in A\}\subseteq[2,N/d]$ primitive,
+\[
+\int_0^zw_D(P_A-P_{C_d(A)})=\int_0^zP_B\,dG,\qquad
+G(y)=\int_0^{y^d}w_{Dd}(v)\bigl[P_T(v)-(1-v)\bigr]dv .
+\]
+Split $P_T-(1-v)=(P_T-P_{\Prm_{\lfloor N/d\rfloor}})+(P_{\Prm_{\lfloor N/d\rfloor}}-Q)+(Q-(1-v))$.
+The first part has nonnegative running integrals by the induction hypothesis (weight index
+$Dd$, $U'=[2,N/d]$, $\Min(U')=\Prm_{\lfloor N/d\rfloor}$), the second is pointwise $\ge0$, and the
+third by \eqref{eq:Jw} with $E=Dd\ge2$. So $G\ge0$, and Lemma~\ref{lem:stieltjesL1} with the
+nonincreasing weight $P_B$ gives $\int_0^zP_B\,dG\ge0$ (here $w_D$ is only integrable, which is
+why the $L^1$ form is needed). The compression lowers the element sum, so iterating
+ends in a subset of $\Min(U)$. The extensions are as in the proofs of [P, Theorems~1.2
+and~4.1].
+\end{proof}
+
+\begin{corollary}\label{cor:2alpha}
+For $\phi(x)=x^k$, relative extremality holds if and only if $k\le2\alpha_0$. For every
+$k>2\alpha_0$ the set $2\Prm=\{4,6,10,14,\dots\}$ beats $\Min(U)=\{2\}$ in $U=\{2,4,6,8,\dots\}$:
+$\E Z_{2\Prm}^k<\E Z_{\{2\}}^k$.
+\end{corollary}
+
+\begin{proof}
+The $D$-th condition is $(k/D)J_{k/D}(1)\ge0$. By variation diminishing, $J_s(1)$ changes sign
+once, at $\alpha_0$, so all conditions hold iff $k/2\le\alpha_0$.
+\end{proof}
+
+So the stopping point $2\alpha_0\approx4.286$ of the bootstrap in [P, Remark~4.4] is not a
+weakness of that method: no argument that uses only the relative structure can pass it.
+
+\begin{remark}[when $D=2$ suffices]
+If $u\mapsto\log(1/u)\,(uw(u))'/w(u)$ is nonincreasing on $(0,1)$ (for instance
+$w=ku^{k-1}$), then $w_{D'}/w_D$ is nonincreasing for $D'>D$, and the single condition $D=2$
+implies all others: $\int w_{D'}g\ge(w_{D'}/w_D)(x^*)\int w_Dg$, where $x^*$ is the sign change
+of $g$.
+\end{remark}
+
+\subsection{Absolute extremality: ordered compressions}
+
+The obstruction of Corollary~\ref{cor:2alpha} is a compression at $2$ with a prime-like
+quotient block. In the absolute problem it can be avoided.
+
+\begin{theorem}\label{thm:odd}
+If $J_b(1)>0$, then for every $0<k\le3b$ and $c\in(0,1]$ the primes uniquely minimize
+$\E\min(Z_A^k,c^k)$, over primitive $A\subseteq\{2,\dots,N\}$ for every $N$ and over all primitive
+$A$. In particular this holds for $0<k\le51/8$ ($b=17/8$) and for every $k<3\alpha_0=6.4293\ldots$.
+\end{theorem}
+
+\begin{proof}
+For $k\le1$ see [P, Remark~4.4]. Let $1<k\le3b$. Descend from $A$ as follows. \emph{While some
+composite of $A$ has an odd prime factor $p$, compress at $p$.} The block $T$ is an
+arbitrary primitive set. If $p\ge k$, [P, Lemma~3.1] applies. If $p<k$, the running integral of
+$ku^{k-1}E_T(u^p)$ splits as in [P, Remark~4.4] into the comparison of $T$ with $\Prm$ at exponent
+$s=k/p\le k/3\le b$, which is nonnegative by the moment theorem at smaller exponents, plus
+$J_s(y^p)>0$. Once no composite has an odd prime factor, every composite is a power of $2$,
+and a primitive set contains at most one, say $2^j$ with $j\ge2$. \emph{Compress at $2$:} the
+only even element is $2^j$, so $T=\{2^{j-1}\}$ and $E_T(v)=v-v^{2^{j-1}}>0$ on $(0,1)$. This step is
+free. Finally add the missing primes. Infinite sets are treated as in the proof of
+[P, Theorem~1.2], choosing the compression prime by the same rule. The comparison at smaller
+exponents needs minimality at exponents in $[1,b]$, which is known: $J_b(1)>0$ forces
+$b<\alpha_0<17/4$, and [P, Remark~4.4] covers $[1,17/4]$.
+\end{proof}
+
+This is formalized in \texttt{RntPaper/MomentsOdd.lean} (Lean $4.35$, built against the
+paper's pinned Mathlib and LeanCert): \texttt{moment\_primes\_lt\_odd},
+\texttt{moment\_primesLE\_lt\_odd} ($0<k\le51/8$) and \texttt{moment\_primes\_lt\_odd\_of\_Jw}
+($0<k\le3b$ whenever $J_b(1)>0$). All three depend only on \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound}.
+
+Treating the primes $3$ and $5$ by envelopes instead of $J$ pushes further.
+
+\begin{lemma}[envelopes]\label{lem:env}
+Let $T$ be an antichain in $\sm{2,3}\setminus\{1\}$. If $2\in T$ or $3\in T$, then
+$P_T\ge(1-v^2)(1-v^3)$ on $[0,1]$; otherwise $P_T\ge H_{23}:=\prod_{n\in\sm{2,3},\,n\ge4}(1-v^n)$.
+Let $T$ be an antichain in $\sm{2,3,5}\setminus\{1\}$ and $R_0=T\cap\{2,3,5\}$. Then $P_T\ge E_{R_0}$,
+where $E_{\{2,3,5\}}=(1-v^2)(1-v^3)(1-v^5)$, $E_{\{2,3\}}=(1-v^2)(1-v^3)(1-v^{25})$,
+$E_{\{2,5\}}=(1-v^2)(1-v^5)(1-v^9)$, $E_{\{3,5\}}=(1-v^3)(1-v^4)(1-v^5)$, and for $|R_0|\le1$
+$E_{R_0}=\prod_{r\in R_0}(1-v^r)\prod_n(1-v^n)$ over $n\in\sm{2,3,5}$, $n\ge4$, $n\notin\{2,3,5\}$,
+divisible by no element of $R_0$.
+\end{lemma}
+
+\begin{proof}
+If $2\in T$, the other elements are odd, hence powers of $3$, and pairwise comparable, so
+there is at most one. Similarly if $3\in T$. If $\{2,3\}\subseteq T$ in the second case, the other
+elements are powers of $5$, at least $25$, at most one; the other pairs are alike. In all
+cases $P_T$ is at least the product over the largest set of exponents $T$ can contain.
+\end{proof}
+
+\begin{theorem}\label{thm:1339}
+For every $0<k<3+6\sqrt3=13.3923\ldots$ and $c\in(0,1]$ the primes uniquely minimize
+$\E\min(Z_A^k,c^k)$ over primitive sets (finite in $\{2,\dots,N\}$ for every $N$, and arbitrary).
+\end{theorem}
+
+\begin{proof}
+For $k\le51/8$ this is Theorem~\ref{thm:odd}; let $51/8<k<3+6\sqrt3$. Order the compressions:
+(i) at primes $p\ge7$ dividing a composite, as in Theorem~\ref{thm:odd}, which needs
+$k/7\le17/8$; (ii) at $5$, once every composite is $5$-smooth; (iii) at $3$, once every
+composite is $3$-smooth; (iv) at $2$, with a singleton block. In step (ii) the block $T$ lies
+in $\sm{2,3,5}$, in step (iii) in $\sm{2,3}$. By Lemma~\ref{lem:env} and Lemma~\ref{lem:stieltjesL1} it suffices
+that, for each envelope $E$ and $s=k/p$, the running integrals
+$R_s(z)=\int_0^zv^{s-1}(E(v)-(1-v))\,dv$ are positive on $(0,1]$. The script
+\texttt{envelope\_certificate.py} verifies this in exact rational arithmetic, with one of two
+certificates:
+\begin{itemize}
+\item[(SC)] $E$ is a polynomial and $E-(1-v)=v(1-v)h(v)$ with exactly one root of $h$ in
+$(0,1)$ and $h(0)>0>h(1)$ (Sturm). Then $R_s(z)\ge\min(R_s(0^+),R_s(1))$, and $R_s(1)>0$ implies
+$R_{s'}(1)>0$ for $s'\le s$.
+\item[(V1)] A polynomial $L\le E$ on $[0,v_1]$ with $L-(1-v)\ge0$ there, and
+$\int_0^{v_1}v^{s-1}(L-(1-v))>\int_{v_1}^1v^{s-1}(1-v)$. Then, since $E\ge0$, $R_s>0$ on $(0,1]$,
+and the inequality persists for $s'\le s$.
+\end{itemize}
+For $(1-v^2)(1-v^3)$ the computation is exact:
+$R_s(1)=\frac{11+2s-s^2}{(s+1)(s+2)(s+3)(s+5)}$, which is positive iff $s<1+2\sqrt3$. This is
+the bottleneck, at $k=3s$. The other certificates are: $H_{23}$ by (V1) at $s=5$;
+$E_{\{2,3,5\}}$ by (SC) at $s=75/28>(3+6\sqrt3)/5$, where $R_s(1)=9.69\cdot10^{-5}$; the other three
+polynomial envelopes by (SC) at $s=3$; the four infinite envelopes by (V1) at $s=3$. Step (i)
+needs $(3+6\sqrt3)/7=1.913<17/8$.
+\end{proof}
+
+The configuration that blocks this method is $A\supseteq\{6,9\}$ with $2,3\notin A$, compressed at
+$3$ with $T=\{2,3\}$. It is exactly the configuration of $A_9$.
+
+\subsection{The exact threshold}
+
+\begin{theorem}\label{thm:k9}
+Let $k_9=125.84045406944565748\ldots$ be the unique positive root of
+$\E Z_{\{4,5,6,7,9\}}^k=\E Z_{\{2,3,5,7\}}^k$. For every $0<k\le k_9$, every $N\ge2$, every primitive
+$A\subseteq\{2,\dots,N\}$ and every $c\in(0,1]$,
+\[
+\E\min(Z_{\Prm_N}^k,c^k)\ \le\ \E\min(Z_A^k,c^k),
+\]
+with strict inequality if $k<k_9$ and $A\ne\Prm_N$. The same holds with $\Prm$ in place of
+$\Prm_N$ for every primitive $A$, finite or infinite. For every $k>k_9$ the inequality fails at
+$N=9$, $A=A_9=\{4,5,6,7,9\}$, $c=1$. Hence the largest $k$ for which $\Prm_N$ minimizes $\E Z_A^k$
+over primitive $A\subseteq\{2,\dots,N\}$ for every $N$ is exactly $k_9$.
+\end{theorem}
+
+The proof is a weighted version of the ordered descent of Theorem~\ref{thm:1339}. Two changes
+make it reach $k_9$: the factor contributed by the large primes is kept in every comparison,
+and the primes $2,3,5,7$ are not compressed one at a time but replaced together.
+
+\begin{lemma}[weighted exchange]\label{lem:wexch}
+Let $p$, $B$, $T$ be as in [P, Proposition~3.4], $B_0\subseteq B$, $k>0$ and $c\in(0,1]$. If
+\[
+G(y)=\int_0^yku^{k-1}P_{B_0}(u)\bigl[P_T(u^p)-(1-u^p)\bigr]\,du\ \ge\ 0\qquad(0<y\le c),
+\]
+then $\E\min(Z_{B\cup\{p\}}^k,c^k)\le\E\min(Z_{B\cup pT}^k,c^k)$, with strict inequality if $G>0$
+on $(0,c]$.
+\end{lemma}
+
+\begin{proof}
+The difference of the two sides is $\int_0^cP_{B\setminus B_0}\,dG$, and $w=P_{B\setminus B_0}$ is
+continuous, nonincreasing and nonnegative; apply Lemma~\ref{lem:stieltjesL1}. For strictness: if
+$B\setminus B_0=\varnothing$ the difference is $G(c)$; otherwise, if $c<1$ then $w(c)>0$, and if
+$c=1$ then $w(1)=0$ and $d(-w)$ has mass $1$ on $(0,1)$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:k9}]
+Fix $0<k\le k_9$, $c\in(0,1]$, $N$ and a primitive $A\subseteq[2,N]$. Write
+$\mathcal M(A)=\E\min(Z_A^k,c^k)$. We transform $A$ into $\Prm_N$ by steps that do not increase
+$\mathcal M$; adding a prime that divides no element of $A$ always lowers $\mathcal M$.
+
+(i) While some composite of $A$ has a prime factor $p\ge61$, compress at such a $p$. This is
+admissible as in Theorem~\ref{thm:odd}: either $p\ge k$ ([P, Lemma~3.1]), or
+$1\le k/p\le k_9/61<2.07<17/8$, and minimality at exponent $k/p$ is [P, Remark~4.4].
+
+(ii) For $p=59,53,\dots,13,11$ in turn: every composite is now $p$-smooth, so no composite
+element of $A$ is divisible by a prime $q\in(p,N]$, and we add every such $q$ missing from $A$. If some
+composite is divisible by $p$, compress at $p$. The block $T=\{a/p:p\mid a\in A\}$ is an antichain
+of $p$-smooth numbers $\ge2$, and since $p\max T\le N$ the remaining elements contain
+$B_0=\Prm\cap(p,p\max T]$. By Lemma~\ref{lem:wexch} this step is admissible if
+\begin{equation}\label{eq:Cp}
+\int_0^yku^{k-1}\prod_{q\in Q}(1-u^q)\,\bigl[P_T(u^p)-(1-u^p)\bigr]\,du\ \ge\ 0\qquad(0<y\le1)
+\end{equation}
+for some set $Q$ of primes in $(p,p\max T]$.
+
+(iii) Now every composite is $7$-smooth. Add every missing prime in $[11,N]$ (none divides an
+element of $A$; this is needed for $11$, which step (ii) never adds), so that
+$A\supseteq\Prm\cap[11,N]$, and add each prime $r\le7$, $r\le N$, that divides no element of $A$. If $N\le6$, compare $A$ with $\Prm_N$ directly.
+Otherwise $A=(\Prm\cap[11,N])\cup S$, where $S$ is an antichain of $7$-smooth numbers in which
+each of $2,3,5,7$ divides some element, and
+\[
+\mathcal M(A)-\mathcal M(\Prm_N)=\int_0^cku^{k-1}P_{\Prm\cap[11,N]}(u)\,
+\bigl[P_S(u)-P_{\{2,3,5,7\}}(u)\bigr]\,du .
+\]
+Since $N\ge\max S$, Lemma~\ref{lem:stieltjesL1} reduces nonnegativity to
+\begin{equation}\label{eq:Cstar}
+\int_0^yku^{k-1}\prod_{11\le q\le\max S}(1-u^q)\,\bigl[P_S(u)-P_{\{2,3,5,7\}}(u)\bigr]\,du\ \ge\ 0
+\qquad(0<y\le1).
+\end{equation}
+
+Proposition~\ref{prop:cert} supplies \eqref{eq:Cp}, \eqref{eq:Cstar} and the case $N\le6$. For
+$k<k_9$ every certificate gives strict positivity on $(0,1]$, so any nontrivial step is strict.
+For infinite $A$, the inequality follows from the finite one by truncation and dominated
+convergence. For strictness, either some composite has a prime factor $\ge61$, and one strict
+compression followed by the lower bound suffices, or all composites are $59$-smooth. In that case
+they form an antichain in $\mathbb N^{17}$, which is finite by Dickson's lemma. Add all primes
+dividing no composite, and run steps (ii)--(iii) on the resulting set: $B$ then contains
+infinitely many primes, which is harmless since $P_B$ is still continuous and nonincreasing on
+$[0,1]$, and the finitely many compressions end at $\Prm$ with at least one strict step. At $k=k_9$ every certificate except that of $A_9$ (and of its subsets, which are dominated
+pointwise) is strict, since they hold up to $126$; the final step with $S=A_9$ is strict unless
+$N\le10$ (so that no prime $\ge11$ enters the weight) and $c=1$ (otherwise $R_{k_9}(c)>0$). So at
+$k=k_9$ equality holds only for $A=A_9$, $N\in\{9,10\}$, $c=1$. Finally,
+$P_{A_9}-P_{\Prm_9}$ changes sign exactly once on $(0,1)$, from $+$ to $-$. By variation
+diminishing, $k\mapsto\E Z_{A_9}^k-\E Z_{\Prm_9}^k$ changes sign exactly once, at $k_9$, and is
+negative for $k>k_9$.
+\end{proof}
+
+\begin{proposition}[computer-verified]\label{prop:cert}
+\begin{enumerate}
+\item[(a)] For every prime $11\le p\le59$ and every antichain $T$ of $p$-smooth numbers $\ge2$,
+condition \eqref{eq:Cp} holds for every $0<k\le126$.
+\item[(b)] For every antichain $S$ of $7$-smooth numbers in which each of $2,3,5,7$ divides some
+element, condition \eqref{eq:Cstar} holds for every $0<k\le126$ if $S\not\subseteq A_9$, and for
+every $0<k\le k_9$ if $S\subseteq A_9$. (The proper subsets of $A_9$ with this covering property and
+maximum $9$, namely $\{4,5,7,9\}$ and $\{5,6,7,9\}$, even satisfy $P_S>P_{\{2,3,5,7\}}$ on $(0,1)$;
+this is checked exactly, but not needed.)
+\item[(c)] For $N\le6$ and every primitive $A\subseteq[2,N]$,
+$\int_0^yku^{k-1}(P_A-P_{\Prm_N})\,du\ge0$ for all $y\in(0,1]$ and $0<k\le126$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Verification]
+First, finitely many cases.
+\begin{itemize}
+\item \emph{Maximality.} If $T\subseteq T'$ and $\max T'=\max T$, the integrand of \eqref{eq:Cp}
+for $T$ dominates the one for $T'$ pointwise, since the weight is the same and $P_T\ge P_{T'}$;
+likewise for $S$. So it suffices to treat $T$ maximal among antichains of $p$-smooth numbers in
+$[2,\max T]$, and $S$ maximal among antichains of $7$-smooth numbers in $[2,\max S]$.
+\item \emph{Explicit cases.} All such $T$ with $\max T<m_p$, for
+$(p,m_p)=(11,30)$, $(13,24)$, $(17,20)$, $(19,16)$, $(23,14)$, $(29,12)$, $(31,10)$, $(37,9)$,
+$(41,8)$, $(43,8)$, $(47,6)$, $(53,6)$, $(59,5)$, and all such $S$ with $\max S<64$, are
+enumerated: $928$ blocks and $3113$ sets.
+\item \emph{Tails of (a).} If $\max T\ge m_p$, take $Q\subseteq\Prm\cap(p,pm_p]$ and cut $T$ at
+$B_p\le m_p$ ($B_p=24,20,16,14,12,10,9,8,7,7,6,6,5$). The part below $B_p$ lies in a maximal
+antichain $M$ of $p$-smooth numbers below $B_p$, so $P_T(v)\ge P_M(v)\prod_{n\ge B_p}(1-v^n)$.
+This gives $243$ envelope conditions.
+\item \emph{Tails of (b).} If $\max S\ge64$, write $S=R_0\cup S'$ with $R_0=S\cap\{2,3,5,7\}$.
+Then $S'$ consists of composites of $\sm{R'}$, where $R'=\{2,3,5,7\}\setminus R_0$, and
+$P_S-P_{\{2,3,5,7\}}=P_{R_0}(P_{S'}-P_{R'})$. Put $A_0=S'\cap[4,24)$, an arbitrary antichain. The
+elements of $S'$ that are $\ge24$ are composites of $\sm{R'}$ divisible by no element of $A_0$. If
+none of these is $\ge64$, the case is vacuous. Otherwise
+$P_{S'}\ge P_{A_0}\prod_{n\in C(A_0)}(1-u^n)$, where $C(A_0)$ is that set of composites. With the
+weight $P_{R_0}\prod_{11\le q\le64}(1-u^q)$ this gives $1031$ envelope conditions, $12$ of them
+vacuous (the Lean proof certifies these $12$ by the same envelope test as the others). (The full weight in \eqref{eq:Cstar} contains this one; the extra factor is nonincreasing,
+so Lemma~\ref{lem:stieltjesL1} transfers the condition.)
+\item \emph{Small $N$}: $35$ nonempty primitive sets (the Lean enumeration also checks
+$A=\varnothing$ for each $N$, $40$ lists in all).
+\end{itemize}
+Each case is then verified in exact integer and rational arithmetic
+(\texttt{stage1/cert\_lib.py}, \texttt{stage1/cert\_stage3.py}).
+\begin{itemize}
+\item[(SC)] For a polynomial integrand $W\cdot D$ with $W>0$: exact real-root isolation shows
+that $D$ is positive on $(0,1)$ or has one sign change there, from $+$ to $-$. In the latter case
+$R_{126}(1)=\sum_ng_n\,126/(126+n)$ is computed exactly and is positive. By variation diminishing
+the running-integral condition then holds for all $0<k\le126$.
+\item[(V1)] For an envelope, the certificate of Theorem~\ref{thm:1339}, now with the weight: a
+polynomial lower bound $L$ on $[0,u_1]$; nonnegativity of $L$ minus the target on $[0,u_1]$, by
+the Weierstrass and Bonferroni inequalities near $0$ and a monotone partition elsewhere; and an
+exact comparison of the two integrals. For the tails of (b), $L$ keeps the factors $1-u^n$ with
+$n\in A_0$ or $n\in C(A_0)$, $n<N_2=120$, and bounds the product over \emph{all} $n\ge N_2$ (a
+superset of $C(A_0)\cap[N_2,\infty)$) by $1-u^{N_2}/(1-u_1)$. For the tails of (a), the cut is at
+$B_p$ in the variable $v=u^p$, with $\prod_{n\ge B_p}(1-v^n)\ge1-v^{B_p}/(1-v_1)$.
+\item[($A_9$)] One sign change, and the exact values $R_{125.84}(1)>0>R_{125.85}(1)$, which bracket
+$k_9$. By variation diminishing the condition holds exactly for $k\le k_9$.
+\end{itemize}
+All $5350$ certificates pass. Apart from $A_9$, the smallest margins are
+$R_{126}(1)=5.8\cdot10^{-8}$ for the sets $S$ and $1.4\cdot10^{-5}$ for the blocks $T$. A random
+sample of the exact values was recomputed by $40$-digit quadrature from independently built
+integrands, and agrees to relative precision $10^{-16}$.
+\end{proof}
+
+\begin{remark}[why $2,3,5,7$ together]
+With the weights, single-prime compressions at $5$ and $7$ fail before $k_9$: at about $54.6$
+and $87.0$ respectively, both for the block $T=\{2,3,5\}$. At $11$ and beyond the margins are
+large; the smallest explicit threshold is $198.6$, at $p=11$. The joint comparison of the
+$7$-smooth part is tight at $A_9$ and nowhere else. The next smallest threshold is $139.9$, for
+$S=\{4,6,7,9,10,15,25\}$, the set behind $N=25$ below.
+\end{remark}
+
+\begin{remark}[consistency checks]
+The theorem agrees with direct computation. Over all maximal primitive
+$A\subseteq\{2,\dots,N\}$ with $N\le46$ (22{,}299 sets at $N=46$), the first exponent with
+$\E Z_A^k<\E Z_{\Prm_N}^k$ is smallest at $N=9,10$ ($125.84$, from $A_9$); then come $149.0$
+($N=11,12$), $171.3$, $141.2$ ($N=15$), \dots, $139.92$ ($N=25$, adding $25$), \dots, and
+$171.0$ at $N=46$. About $27{,}000$ further competitors $(\Prm_N\setminus R)\cup S$ were tested at $c=1$,
+with $R\subseteq\{2,3,5,7,11\}$ and elements up to $3000$; none crosses below $k_9$. An independent
+reviewer (\texttt{review2/}) enumerated all $2{,}194{,}792$ maximal primitive subsets of
+$\{2,\dots,N\}$ for $7\le N\le62$, at all truncation levels $c$, and ran random and
+simulated-annealing searches up to $N=400$: nothing falls below $k_9$, and only $A_9$ and the
+set at $N=25$ fall below $140$. The same reviewer re-verified every case of
+Proposition~\ref{prop:cert} by different exact methods (independent root isolation, a direct
+exact proof that $R_{126}(y)>0$ for all $y$, and outward-rounded interval arithmetic for the
+tails). At $k=k_9$
+equality holds only for $A=A_9$ with $N\in\{9,10\}$ and $c=1$. The Lean development already
+contains the case $N=9$ for $1\le k\le3146/25$ (\texttt{primes\_minimize\_Mk\_N9}); for
+$0<k<1$ the case $N=9$ follows from the concave case.
+\end{remark}
+
+
+\section{Lean formalization}\label{sec:lean}
+
+The following are formalized in \texttt{lean/RntPaper/} (Lean $4.35$, the paper's pinned Mathlib and
+LeanCert), with no \texttt{sorry}. Theorem~\ref{thm:relative} and Corollary~\ref{cor:2alpha}:
+\texttt{Relative.lean} (\texttt{relative\_cone\_iff}, \texttt{relative\_cone\_le},
+\texttt{relative\_cone\_lt}, \texttt{relative\_powers\_iff}, \texttt{twoPrimes\_moment\_lt}), for every
+weight $w\in L^1(0,1)$, $w\ge0$. Theorem~\ref{thm:odd}: \texttt{MomentsOdd.lean}.
+Theorem~\ref{thm:1339}: \texttt{Moments1339.lean}. These use only the axioms \texttt{propext},
+\texttt{Classical.choice}, \texttt{Quot.sound}.
+
+Theorem~\ref{thm:k9}: \texttt{K9Theorem.lean} (\texttt{moment\_primesLE\_k9}, \texttt{moment\_primes\_k9},
+\texttt{moment\_A9\_lt}, \texttt{k9\_threshold}, \texttt{k9\_unique\_root}), with $k_9$ defined as the
+root of $\E Z_{A_9}^k=\E Z_{\Prm_9}^k$ in $(125.84,125.85)$. Each executable check of
+Proposition~\ref{prop:cert} has a soundness theorem (single sign change with variation
+diminishing, and the envelope test), and the completeness of the case enumeration is proved; the
+envelope parameters are re-verified inputs. The checks themselves run by \texttt{native\_decide},
+so this theorem additionally trusts Lean's compiler, as do the two \texttt{native\_decide}
+computations of~[P]. Not formalized: the equality case at $k=k_9$ and the remark on the proper
+subsets of $A_9$. An independent audit is in \texttt{supplement/discovery/review3/}.
+
+\section*{Files}
+\begin{itemize}
+\item \texttt{supplement/discovery/op3\_local.py}: telescoping terms, saddle data, the
+predictions of \S2; \texttt{op3\_tables.py}, \texttt{op3\_variance.py}.
+\item \texttt{supplement/discovery/op2\_relative.py}: $\alpha_0$ and the relative test.
+\texttt{op2\_absolute\_scan.py}, \texttt{op2\_scan\_fast.py}, \texttt{op2\_families.py},
+\texttt{stage1/cex\_search.py}: the consistency checks for Theorem~\ref{thm:k9}.
+\item \texttt{supplement/discovery/envelope\_certificate.py}: exact certificates for
+Theorem~\ref{thm:1339}.
+\item \texttt{supplement/discovery/stage1/}: \texttt{cert\_lib.py} and \texttt{cert\_stage3.py}
+(exact certificates for Proposition~\ref{prop:cert}; logs \texttt{cert\_part1\_log.jsonl},
+\texttt{cert\_part2\_log.jsonl}), \texttt{cross\_check.py} (independent quadrature), and the
+floating-point explorations \texttt{explore.py}, \texttt{stage3\_explore.py},
+\texttt{merged\_tail2.py}.
+\item \texttt{lean/RntPaper/}: the formalization (\S\ref{sec:lean}).
+\item \texttt{supplement/discovery/review/}: an independent review of \S\S2--3.1 with its own
+recomputations.
+\end{itemize}
+Floating-point computations are evidence, not certificates; the envelope certificates, the
+certificates of Proposition~\ref{prop:cert} and the Lean proofs are exact.
+
+\begin{thebibliography}{9}
+\bibitem{P} A.~Radisic, Prime extremality for product integrals over primitive sets,
+preprint (2026); Lean artifact \url{https://github.com/alerad/prime-extremality}.
+\bibitem{Cramer} H.~Cram\'er, Some theorems concerning prime numbers, \emph{Ark. Mat. Astr.
+Fys.} \textbf{15} (1920), no.~5, 1--33.
+\bibitem{Hux} M.~N. Huxley, On the difference between consecutive primes, \emph{Invent.
+Math.} \textbf{15} (1972), 164--170.
+\bibitem{Kum} A.~Kumchev, \emph{The distribution of prime numbers}, lecture notes (2005),
+\S5.6, Theorem~7, \url{https://tigerweb.towson.edu/akumchev/distributionofprimesnotes.pdf}.
+\bibitem{Mon} H.~L. Montgomery, \emph{Topics in Multiplicative Number Theory}, Lecture Notes
+in Math.~227, Springer, 1971.
+\bibitem{MV} H.~L. Montgomery and R.~C. Vaughan, The large sieve, \emph{Mathematika}
+\textbf{20} (1973), 119--134.
+\end{thebibliography}
+
+\end{document}

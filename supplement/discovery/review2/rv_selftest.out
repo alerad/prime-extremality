@@ -1,0 +1,15 @@
+count 3 expected 3 OK
+count 2 expected 2 OK
+count 0 expected 0 OK
+count 1 expected 1 OK
+count 2 expected 2 OK
+count 3 expected 3 OK
+count 2 expected 2 OK
+count 0 expected 0 OK
+count 1 expected 1 OK
+count 2 expected 2 OK
+random root tests: 400 tried, 0 mismatches
+single+- (expect single+- : -(u)(1-u)^2(2u-1) )
+other:1,True,True (expect other: double root, + + )
+other:3,True,False (expect other: 3 roots)
+running-integral tests: 300 tried, 0 disagreements

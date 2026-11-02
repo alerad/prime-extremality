@@ -1,0 +1,156 @@
+\subsection{The exact threshold}
+
+\begin{theorem}\label{thm:k9}
+Let $k_9=125.84045406944565748\ldots$ be the unique positive root of
+$\E Z_{\{4,5,6,7,9\}}^k=\E Z_{\{2,3,5,7\}}^k$. For every $0<k\le k_9$, every $N\ge2$, every primitive
+$A\subseteq\{2,\dots,N\}$ and every $c\in(0,1]$,
+\[
+\E\min(Z_{\Prm_N}^k,c^k)\ \le\ \E\min(Z_A^k,c^k),
+\]
+with strict inequality if $k<k_9$ and $A\ne\Prm_N$. The same holds with $\Prm$ in place of
+$\Prm_N$ for every primitive $A$, finite or infinite. For every $k>k_9$ the inequality fails at
+$N=9$, $A=A_9=\{4,5,6,7,9\}$, $c=1$. Hence the largest $k$ for which $\Prm_N$ minimizes $\E Z_A^k$
+over primitive $A\subseteq\{2,\dots,N\}$ for every $N$ is exactly $k_9$.
+\end{theorem}
+
+The proof is a weighted version of the ordered descent of Theorem~\ref{thm:1339}. Two changes
+make it reach $k_9$: the factor contributed by the large primes is kept in every comparison,
+and the primes $2,3,5,7$ are not compressed one at a time but replaced together.
+
+\begin{lemma}[weighted exchange]\label{lem:wexch}
+Let $p$, $B$, $T$ be as in [P, Proposition~3.4], $B_0\subseteq B$, $k>0$ and $c\in(0,1]$. If
+\[
+G(y)=\int_0^yku^{k-1}P_{B_0}(u)\bigl[P_T(u^p)-(1-u^p)\bigr]\,du\ \ge\ 0\qquad(0<y\le c),
+\]
+then $\E\min(Z_{B\cup\{p\}}^k,c^k)\le\E\min(Z_{B\cup pT}^k,c^k)$, with strict inequality if $G>0$
+on $(0,c]$.
+\end{lemma}
+
+\begin{proof}
+The difference of the two sides is $\int_0^cP_{B\setminus B_0}\,dG$, and $P_{B\setminus B_0}$ is
+continuous, nonincreasing and nonnegative; apply Lemma~\ref{lem:stieltjesL1}. If
+$B\setminus B_0=\varnothing$ the difference is $G(c)$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:k9}]
+Fix $0<k\le k_9$, $c\in(0,1]$, $N$ and a primitive $A\subseteq[2,N]$. Write
+$\mathcal M(A)=\E\min(Z_A^k,c^k)$. We transform $A$ into $\Prm_N$ by steps that do not increase
+$\mathcal M$; adding a prime that divides no element of $A$ always lowers $\mathcal M$.
+
+(i) While some composite of $A$ has a prime factor $p\ge61$, compress at such a $p$. This is
+admissible as in Theorem~\ref{thm:odd}: either $p\ge k$ ([P, Lemma~3.1]), or
+$1\le k/p\le k_9/61<2.07<17/8$, and minimality at exponent $k/p$ is [P, Remark~4.4].
+
+(ii) For $p=59,53,\dots,13,11$ in turn: every composite is now $p$-smooth, so no element of $A$
+is divisible by a prime $q\in(p,N]$, and we add every such $q$ missing from $A$. If some
+composite is divisible by $p$, compress at $p$. The block $T=\{a/p:p\mid a\in A\}$ is an antichain
+of $p$-smooth numbers $\ge2$, and since $p\max T\le N$ the remaining elements contain
+$B_0=\Prm\cap(p,p\max T]$. By Lemma~\ref{lem:wexch} this step is admissible if
+\begin{equation}\label{eq:Cp}
+\int_0^yku^{k-1}\prod_{q\in Q}(1-u^q)\,\bigl[P_T(u^p)-(1-u^p)\bigr]\,du\ \ge\ 0\qquad(0<y\le1)
+\end{equation}
+for some set $Q$ of primes in $(p,p\max T]$.
+
+(iii) Now every composite is $7$-smooth and $A\supseteq\Prm\cap[11,N]$. Add each prime $r\le7$,
+$r\le N$, that divides no element of $A$. If $N\le6$, compare $A$ with $\Prm_N$ directly.
+Otherwise $A=(\Prm\cap[11,N])\cup S$, where $S$ is an antichain of $7$-smooth numbers in which
+each of $2,3,5,7$ divides some element, and
+\[
+\mathcal M(A)-\mathcal M(\Prm_N)=\int_0^cku^{k-1}P_{\Prm\cap[11,N]}(u)\,
+\bigl[P_S(u)-P_{\{2,3,5,7\}}(u)\bigr]\,du .
+\]
+Since $N\ge\max S$, Lemma~\ref{lem:stieltjesL1} reduces nonnegativity to
+\begin{equation}\label{eq:Cstar}
+\int_0^yku^{k-1}\prod_{11\le q\le\max S}(1-u^q)\,\bigl[P_S(u)-P_{\{2,3,5,7\}}(u)\bigr]\,du\ \ge\ 0
+\qquad(0<y\le1).
+\end{equation}
+
+Proposition~\ref{prop:cert} supplies \eqref{eq:Cp}, \eqref{eq:Cstar} and the case $N\le6$. For
+$k<k_9$ every certificate gives strict positivity on $(0,1]$, so any nontrivial step is strict.
+For infinite $A$, the inequality follows from the finite one by truncation and dominated
+convergence. For strictness, either some composite has a prime factor $\ge61$, and one strict
+compression followed by the lower bound suffices, or all composites are $59$-smooth. In that case
+they form an antichain in $\mathbb N^{17}$, which is finite by Dickson's lemma, and the finite
+descent applies to $A$ together with all primes dividing no composite. Finally,
+$P_{A_9}-P_{\Prm_9}$ changes sign exactly once on $(0,1)$, from $+$ to $-$. By variation
+diminishing, $k\mapsto\E Z_{A_9}^k-\E Z_{\Prm_9}^k$ changes sign exactly once, at $k_9$, and is
+negative for $k>k_9$.
+\end{proof}
+
+\begin{proposition}[computer-verified]\label{prop:cert}
+\begin{enumerate}
+\item[(a)] For every prime $11\le p\le59$ and every antichain $T$ of $p$-smooth numbers $\ge2$,
+condition \eqref{eq:Cp} holds for every $0<k\le126$.
+\item[(b)] For every antichain $S$ of $7$-smooth numbers in which each of $2,3,5,7$ divides some
+element, condition \eqref{eq:Cstar} holds for every $0<k\le126$ if $S\ne A_9$, and for every
+$0<k\le k_9$ if $S=A_9$.
+\item[(c)] For $N\le6$ and every primitive $A\subseteq[2,N]$,
+$\int_0^yku^{k-1}(P_A-P_{\Prm_N})\,du\ge0$ for all $y\in(0,1]$ and $0<k\le126$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Verification]
+First, finitely many cases.
+\begin{itemize}
+\item \emph{Maximality.} If $T\subseteq T'$ and $\max T'=\max T$, the integrand of \eqref{eq:Cp}
+for $T$ dominates the one for $T'$ pointwise, since the weight is the same and $P_T\ge P_{T'}$;
+likewise for $S$. So it suffices to treat $T$ maximal among antichains of $p$-smooth numbers in
+$[2,\max T]$, and $S$ maximal among antichains of $7$-smooth numbers in $[2,\max S]$.
+\item \emph{Explicit cases.} All such $T$ with $\max T<m_p$, for
+$(p,m_p)=(11,30)$, $(13,24)$, $(17,20)$, $(19,16)$, $(23,14)$, $(29,12)$, $(31,10)$, $(37,9)$,
+$(41,8)$, $(43,8)$, $(47,6)$, $(53,6)$, $(59,5)$, and all such $S$ with $\max S<64$, are
+enumerated: $928$ blocks and $3113$ sets.
+\item \emph{Tails of (a).} If $\max T\ge m_p$, take $Q=\Prm\cap(p,pm_p]$ and cut $T$ at
+$B_p<m_p$ ($B_p=24,20,16,14,12,10,9,8,7,7,6,6,5$). The part below $B_p$ lies in a maximal
+antichain $M$ of $p$-smooth numbers below $B_p$, so $P_T(v)\ge P_M(v)\prod_{n\ge B_p}(1-v^n)$.
+This gives $243$ envelope conditions.
+\item \emph{Tails of (b).} If $\max S\ge64$, write $S=R_0\cup S'$ with $R_0=S\cap\{2,3,5,7\}$.
+Then $S'$ consists of composites of $\sm{R'}$, where $R'=\{2,3,5,7\}\setminus R_0$, and
+$P_S-P_{\{2,3,5,7\}}=P_{R_0}(P_{S'}-P_{R'})$. Put $A_0=S'\cap[4,24)$, an arbitrary antichain. The
+elements of $S'$ above $24$ are composites of $\sm{R'}$ divisible by no element of $A_0$. If none of
+these exceeds $64$, the case is vacuous. Otherwise
+$P_{S'}\ge P_{A_0}\prod_{n\in C(A_0)}(1-u^n)$, where $C(A_0)$ is that set of composites. With the
+weight $P_{R_0}\prod_{11\le q\le64}(1-u^q)$ this gives $1031$ envelope conditions, $12$ of them
+vacuous.
+\item \emph{Small $N$}: $35$ primitive sets.
+\end{itemize}
+Each case is then verified in exact integer and rational arithmetic
+(\texttt{stage1/cert\_lib.py}, \texttt{stage1/cert\_stage3.py}).
+\begin{itemize}
+\item[(SC)] For a polynomial integrand $W\cdot D$ with $W>0$: exact real-root isolation shows
+that $D$ is positive on $(0,1)$ or has one sign change there, from $+$ to $-$. In the latter case
+$R_{126}(1)=\sum_ng_n\,126/(126+n)$ is computed exactly and is positive. By variation diminishing
+the running-integral condition then holds for all $0<k\le126$.
+\item[(V1)] For an envelope, the certificate of Theorem~\ref{thm:1339}, now with the weight: a
+polynomial lower bound $L$ on $[0,u_1]$, from truncating the product at $N_2\in\{120,200,320\}$
+and using $\prod_{n\ge N_2}(1-u^n)\ge1-u^{N_2}/(1-u_1)$; nonnegativity of $L$ minus the target
+on $[0,u_1]$, by the Weierstrass and Bonferroni inequalities near $0$ and a monotone partition
+elsewhere; and an exact comparison of the two integrals.
+\item[($A_9$)] One sign change, and the exact values $R_{125.84}(1)>0>R_{125.85}(1)$, which bracket
+$k_9$. By variation diminishing the condition holds exactly for $k\le k_9$.
+\end{itemize}
+All $5350$ certificates pass. Apart from $A_9$, the smallest margins are
+$R_{126}(1)=5.8\cdot10^{-8}$ for the sets $S$ and $1.4\cdot10^{-5}$ for the blocks $T$. A random
+sample of the exact values was recomputed by $40$-digit quadrature from independently built
+integrands, and agrees to relative precision $10^{-16}$.
+\end{proof}
+
+\begin{remark}[why $2,3,5,7$ together]
+With the weights, single-prime compressions at $5$ and $7$ fail before $k_9$: at about $54.6$
+and $87.0$ respectively, both for the block $T=\{2,3,5\}$. At $11$ and beyond the margins are
+large; the smallest explicit threshold is $198.6$, at $p=11$. The joint comparison of the
+$7$-smooth part is tight at $A_9$ and nowhere else. The next smallest threshold is $139.9$, for
+$S=\{4,6,7,9,10,15,25\}$, the set behind $N=25$ below.
+\end{remark}
+
+\begin{remark}[consistency checks]
+The theorem agrees with direct computation. Over all maximal primitive
+$A\subseteq\{2,\dots,N\}$ with $N\le46$ (22{,}299 sets at $N=46$), the first exponent with
+$\E Z_A^k<\E Z_{\Prm_N}^k$ is smallest at $N=9,10$ ($125.84$, from $A_9$); then come $149.0$
+($N=11,12$), $171.3$, $141.2$ ($N=15$), \dots, $139.92$ ($N=25$, adding $25$), \dots, and
+$171.0$ at $N=46$. About $27{,}000$ further competitors $(\Prm_N\setminus R)\cup S$ were tested,
+with $R\subseteq\{2,3,5,7,11\}$ and elements up to $3000$; none crosses below $k_9$. At $k=k_9$
+equality holds only for $A=A_9$ with $N\in\{9,10\}$ and $c=1$. The Lean development already
+contains the case $N=9$ for $1\le k\le3146/25$ (\texttt{primes\_minimize\_Mk\_N9}); for
+$0<k<1$ the case $N=9$ follows from the concave case.
+\end{remark}

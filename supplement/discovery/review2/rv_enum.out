@@ -1,0 +1,13 @@
+{'merged_explicit': 3113, 'single_explicit': 928, 'single_tail': 243, 'merged_tail': 1031, 'small_N': 35}
+single explicit per p: {11: 442, 13: 183, 17: 118, 19: 59, 23: 42, 29: 28, 31: 14, 37: 11, 41: 9, 43: 9, 47: 5, 53: 5, 59: 3}
+single tails per p: {11: 125, 13: 47, 17: 23, 19: 12, 23: 10, 29: 6, 31: 5, 37: 3, 41: 3, 43: 3, 47: 2, 53: 2, 59: 2}
+merged explicit per max: {7: 3, 8: 2, 9: 3, 10: 4, 12: 2, 14: 10, 15: 7, 16: 12, 18: 12, 20: 16, 21: 24, 24: 12, 25: 49, 27: 42, 28: 36, 30: 22, 32: 75, 35: 105, 36: 36, 40: 78, 42: 78, 45: 122, 48: 80, 49: 408, 50: 310, 54: 294, 56: 432, 60: 176, 63: 663}
+logged kinds: {'merged_explicit': 3113, 'single_explicit': 928, 'single_tail': 243, 'small_N': 35, 'merged_tail_compat': 1031}
+merged_explicit: mine 3113, logged 3113 (distinct 3113), missing-from-log 0, extra-in-log 0
+single_explicit: mine 928, logged 928 (distinct 928), missing-from-log 0, extra-in-log 0
+single_tail: mine 243, logged 243 (distinct 243), missing-from-log 0, extra-in-log 0
+merged_tail_compat: mine 1031, logged 1031 (distinct 1031), missing-from-log 0, extra-in-log 0
+small_N: mine 35, logged 35 (distinct 35), missing-from-log 0, extra-in-log 0
+vacuous merged tails: 12 [((2,), (4,)), ((2,), (8,)), ((2,), (16,)), ((3,), (9,)), ((2, 3), (4, 6, 9)), ((2, 3), (4, 9)), ((2, 3), (6, 8, 9)), ((2, 3), (6, 9, 16)), ((2, 3), (8, 9)), ((2, 3), (8, 9, 12)), ((2, 3), (9, 12, 16)), ((2, 3), (9, 16))]
+vacuous sets agree with log: True
+wrote rv_cases.json

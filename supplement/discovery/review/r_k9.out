@@ -1,0 +1,14 @@
+positive real roots of E Z^k_{4,5,6,7,9} - E Z^k_{2,3,5,7} (certified arb enclosures):
+    [125.84045406944565748324550702990038779108902794269086110204583363168613132066975751187473 +/- 1.36e-87] mult 1
+exact bisection bracket: [ 125.8404540694456574832455 , 125.8404540694456574832455 ]
+claimed k_9 = 125.84045406944565748...
+sign at k=3146/25 (Lean bound): D>0 ; at k=126: D<=0
+
+N=9: 71 nonempty primitive subsets, 6 maximal:
+   A=(4, 5, 6, 7, 9): D(0.01)>0: True; positive roots of D: ['[125.84045406944565748324550702990038779108902794269086110204583363168613132066975751187473 +/- 1.36e-87]']
+   A=(5, 6, 7, 8, 9): D(0.01)>0: True; positive roots of D: ['[294.55603627071724919561613563443290527990608216159199084768244247401317028276424566933010 +/- 2.92e-88]']
+   A=(2, 5, 7, 9): D(0.01)>0: True; positive roots of D: none
+   A=(3, 4, 5, 7): D(0.01)>0: True; positive roots of D: none
+   A=(3, 5, 7, 8): D(0.01)>0: True; positive roots of D: none
+
+No maximal primitive A != P_9 has E Z_A^k <= E Z_P9^k for 0 < k <= 125: True (smallest crossing = 125.840454069446)

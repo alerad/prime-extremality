@@ -1,0 +1,146 @@
+[
+ {
+  "N": 70,
+  "seed": 70000,
+  "nsets": 2905,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 70,
+  "seed": 70001,
+  "nsets": 2913,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 80,
+  "seed": 80000,
+  "nsets": 2913,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 80,
+  "seed": 80001,
+  "nsets": 2933,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 100,
+  "seed": 100000,
+  "nsets": 2970,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 100,
+  "seed": 100001,
+  "nsets": 2974,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 130,
+  "seed": 130000,
+  "nsets": 2992,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 130,
+  "seed": 130001,
+  "nsets": 2986,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 160,
+  "seed": 160000,
+  "nsets": 2993,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 160,
+  "seed": 160001,
+  "nsets": 2999,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 200,
+  "seed": 200000,
+  "nsets": 2998,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 200,
+  "seed": 200001,
+  "nsets": 2999,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 260,
+  "seed": 260000,
+  "nsets": 3000,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 260,
+  "seed": 260001,
+  "nsets": 3000,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 330,
+  "seed": 330000,
+  "nsets": 3000,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 330,
+  "seed": 330001,
+  "nsets": 3000,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 400,
+  "seed": 400000,
+  "nsets": 3000,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ },
+ {
+  "N": 400,
+  "seed": 400001,
+  "nsets": 3000,
+  "violations": 0,
+  "n_fail_150": 0,
+  "lowest": []
+ }
+]

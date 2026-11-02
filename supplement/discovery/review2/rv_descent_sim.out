@@ -1,0 +1,5 @@
+runs 20000 compressions at p in [11,59] 74130
+uncovered blocks T: 0 []
+uncovered final sets S: 0 []
+runs where some prime >= 11 was missing at step (iii): 1506 examples: [[11], [11], [11], [11], [11]]
+of which missing set == [11]: 1506

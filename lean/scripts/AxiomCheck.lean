@@ -12,7 +12,9 @@ Run by `scripts/check-axioms.sh`, which prepends `import` lines for every module
 * a paper result (the table in `README.md`) uses an axiom beyond `propext`,
   `Classical.choice`, `Quot.sound`. The two `native_decide` computations of the paper are
   the exception: they may additionally use their own generated `native_decide` axioms
-  (or, on older Lean, `Lean.ofReduceBool` / `Lean.trustCompiler`).
+  (or, on older Lean, `Lean.ofReduceBool` / `Lean.trustCompiler`). The follow-up results of
+  `../supplement/discovery/notes.tex` are checked the same way; the `k₉` theorem may use the
+  `native_decide` axioms of its case checks (`RntPaper/K9Cert`).
 -/
 
 open Lean Elab Command
@@ -48,6 +50,19 @@ def paperResults : List Name := [
   `RntPaper.omitMoment_asymptotic_pnt, `RntPaper.tail_second_order_pnt,
   `RntPaper.saddle_second_order, `RntPaper.A9_beats_primes_at_126]
 
+/-- Follow-up results (`../supplement/discovery/notes.tex` §3) on the standard axioms. -/
+def followUpResults : List Name := [
+  `RntPaper.moment_primes_lt_odd, `RntPaper.moment_primesLE_lt_odd,
+  `RntPaper.moment_primes_lt_odd_of_Jw, `RntPaper.relative_cone_iff, `RntPaper.relative_cone_le,
+  `RntPaper.relative_cone_lt, `RntPaper.alpha0_mem, `RntPaper.relative_powers_iff,
+  `RntPaper.twoPrimes_moment_lt, `RntPaper.moment_primesLE_lt_1339,
+  `RntPaper.moment_primes_lt_1339]
+
+/-- Theorem 3.8 of the notes (`k₉`): its 5,350 case checks are `native_decide` computations. -/
+def k9Results : List Name := [
+  `RntPaper.K9.moment_primesLE_k9, `RntPaper.K9.moment_primes_k9, `RntPaper.K9.moment_A9_lt,
+  `RntPaper.K9.k9_threshold, `RntPaper.K9.k9_unique_root, `RntPaper.K9.k9_mem]
+
 elab "#rnt_axiom_check" : command => do
   let env ← getEnv
   let modules := env.allImportedModuleNames
@@ -69,11 +84,11 @@ elab "#rnt_axiom_check" : command => do
     logError m!"declarations depending on sorryAx: {withSorry.qsort Name.lt}"; failed := true
   unless ownAxioms.isEmpty do
     logError m!"axioms declared by the development: {ownAxioms.qsort Name.lt}"; failed := true
-  for n in paperResults do
+  for n in paperResults ++ followUpResults ++ k9Results do
     unless env.contains n do
       logError m!"paper result {n} not found"; failed := true; continue
     let axs ← collectAxioms n
-    let native := nativeDecideResults.contains n
+    let native := nativeDecideResults.contains n || k9Results.contains n
     let extra := axs.filter fun a => !(standardAxioms.contains a || (native && isNativeAxiom a))
     if extra.isEmpty then
       logInfo m!"ok  {n}: {axs}"
@@ -82,7 +97,8 @@ elab "#rnt_axiom_check" : command => do
   logInfo m!"native_decide trust axioms (compiled computations): {nativeAxs.qsort Name.lt}"
   if failed then throwError "axiom audit failed"
   logInfo m!"axiom audit passed: {total} declarations, none uses sorryAx; \
-    {paperResults.length} paper results checked"
+    {paperResults.length} paper results and \
+    {followUpResults.length + k9Results.length} follow-up results checked"
 
 end RntPaper.AxiomCheck
 

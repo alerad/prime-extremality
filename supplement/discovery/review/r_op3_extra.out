@@ -1,0 +1,7 @@
+N>5000 (every 7th prime): corr(heur residual, -log(t_q log q Sigma_q)) = 0.99945, slope = 1.0024
+N>20000 (every 7th prime): corr(heur residual, -log(t_q log q Sigma_q)) = 0.99978, slope = 1.0008
+N=1009: Thm 2.4 residual +0.02273, t_q = 0.02029, residual - t_q = +0.00244
+N=10007: Thm 2.4 residual +0.00717, t_q = 0.00571, residual - t_q = +0.00146
+N=31397: Thm 2.4 residual +0.00338, t_q = 0.00305, residual - t_q = +0.00033
+N=99989: Thm 2.4 residual +0.00202, t_q = 0.00163, residual - t_q = +0.00039
+N>20000: max |Thm2.4 residual - t_q| = 0.00118
